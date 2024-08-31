@@ -1,9 +1,6 @@
-from typing import ClassVar, Never, Callable
-
 from sqlalchemy import SmallInteger, Column
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase, declared_attr, ORMDescriptor, Mapped
-from sqlalchemy.sql.elements import SQLCoreOperations
+from sqlalchemy.orm import DeclarativeBase, declared_attr
 
 
 class Base(DeclarativeBase):
