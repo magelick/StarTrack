@@ -11,7 +11,7 @@ repos:
         args: [— maxkb=1500]
 
   - repo: local
-    # Us hooks
+    # us hooks
     hooks:
       - id: flake8  # Identifier of hook
         name: flake8  # Name of hook
