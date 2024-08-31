@@ -1,0 +1,38 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+    # basic hooks
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-added-large-files
+        args: [— maxkb=1500]
+
+  - repo: local
+    # Us hooks
+    hooks:
+      - id: flake8  # Identifier of hook
+        name: flake8  # Name of hook
+        entry: flake8 --config .flake8 .  # Command for start work hook
+        language: system # Hook will work with user command line system
+        types:  # Define type of file for checking
+          - python  # .py-files
+        pass_filenames: false  # Filename transfer for that hook or not
+
+      - id: black  # Identifier of hook
+        name: black  # Name of hook
+        entry: black --config .black .  # Command for start work hook
+        language: system  # Hook will work with user command line system
+        types:  # Define type of file for checking
+          - python  # .py-files
+        pass_filenames: false  # Filename transfer for that hook or not
+
+      - id: mypy  # Identifier of hook
+        name: mypy  # Name of hook
+        entry: mypy --ignore-missing-imports --explicit-package-bases . # Command for start work hook
+        language: system  # Hook will work with user command line system
+        types: # Define type of file for checking
+          - python  # .py-files
+        pass_filenames: false  # Filename transfer for that hook or not

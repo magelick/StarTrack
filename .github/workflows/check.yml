@@ -1,0 +1,30 @@
+name: 'Code checks'  # action name
+on:  # when work
+  push:  # for push-command
+  pull_request:  # for pull-request command
+
+jobs:
+  test-job:  # first job
+    runs-on: macos-latest  # what system will use
+    steps:  # steps in test-job
+    - uses: actions/checkout@v4  # checkout in working job
+
+    - name: 'install python'  # action name
+      uses: actions/setup-python@v3  # some action
+      with:  # with python version work job
+        python-version: '3.12.2'  # v3.12
+
+    - name: 'install deps'  # action name
+      run: |  # commands
+        python -m pip install poetry
+        poetry install --no-root
+      working-directory: .
+
+    - name: 'run black'   # action name
+      run: poetry run black --config .black .  # command
+
+    - name: 'run flake8'  # action name
+      run: poetry run flake8 --config .flake8 .  # command
+
+    - name: 'run mypy'  # action name
+      run: poetry run mypy --ignore-missing-imports --explicit-package-bases .  # command
