@@ -46,7 +46,9 @@ class UserDetail(UserBasic):
     User detail schema
     """
 
-    id: PositiveInt = Field(default=..., title="User ID", description="ID current user")
+    id: PositiveInt = Field(
+        default=..., title="User ID", description="ID current user"
+    )
     created_at: Optional[datetime] = Field(
         default=datetime.now,
         title="User Created Time",
