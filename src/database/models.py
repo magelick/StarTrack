@@ -55,6 +55,20 @@ class SportTypeEnum(Enum):
     FIGURE_SKATING = "Figure Skating"
     OTHER = "Other"
 
+class BloodType(Enum):
+    """
+    Enum class for Child Medical blood_type
+    """
+
+    A_POSITIVE = "A+"
+    A_NEGATIVE = "A-"
+    B_POSITIVE = "B+"
+    B_NEGATIVE = "B-"
+    AB_POSITIVE = "AB+"
+    AB_NEGATIVE = "AB-"
+    O_POSITIVE = "O+"
+    O_NEGATIVE = "O-"
+
 
 class UserChild(Base):
     """
@@ -107,74 +121,137 @@ class Child(Base):
     age = Column(Union[Float, SmallInteger], nullable=False)  # type: ignore
     gender = Column(SqlEnum(GenderEnum), nullable=False)  # type: ignore
     photo_url = Column(String(200), nullable=True)
+    illness_history = Column(JSON, nullable=True)  # Child's illness history
+    medical_diagnoses = Column(JSON, nullable=True)  # Child's medical diagnoses
     parents = relationship(
         "User", secondary=UserChild.__table__, back_populates="children"
     )
 
-class DiaryEntry(Base):
+class ChildData(Base):
+    """
+    Child Data
+    """
 
-    date = Column(Date, nullable=False, default=datetime.now)  # Дата записи
-    feedback = Column(String(200), nullable=True)  # Обратная связь от родителей или опекунов
-    pulse_recovery_status = Column(String(100), nullable=True)  # Статус восстановления пульса
-    adolescence_info = Column(String(200), nullable=True)  # Информация о подростковом возрасте
-    entry_type = Column(String, nullable=False)  # Тип записи (например, медицинская, психологическая и т.д.)
-    child_id = Column(Integer, ForeignKey('child_profile.id'), nullable=False)  # Идентификатор ребенка
-
-    # Поля для медицинских данных
-    illness_history = Column(JSON, nullable=True)  # История заболеваний ребенка
-    medical_diagnoses = Column(JSON, nullable=True)  # Медицинские диагнозы ребенка
-    vaccinations = Column(JSON, nullable=True)  # Вакцинации ребенка, включая даты и типы
-    medications_and_procedures = Column(JSON, nullable=True)  # Лекарства и медицинские процедуры
-    height_and_weight = Column(Float, nullable=True)  # Рост и вес ребенка (возможно, в формате "рост, вес")
-    medical_test_results = Column(JSON, nullable=True)  # Результаты медицинских анализов (кровь, моча и т.д.)
-    blood_type = Column(String(10), nullable=True)  # Группа крови
-
-    # Поля для текущего состояния и активности
-    current_symptoms = Column(JSON, nullable=True)  # Текущие симптомы или проблемы со здоровьем
-    frequency_of_illnesses = Column(JSON, nullable=True)  # Частота простуд, аллергий или других заболеваний
-    doctor_visits = Column(JSON, nullable=True)  # История посещений врачей, включая дату и причины визитов
-    stress_anxiety_depression = Column(JSON, nullable=True)  # Частота и причины стресса, тревожности или депрессии
-    emotional_state = Column(JSON, nullable=True)  # Общее эмоциональное состояние (например, счастье, грусть)
-
-    # Поля для развития и взаимодействия
-    peer_interactions = Column(JSON, nullable=True)  # Взаимодействие с сверстниками
-    communication_skills = Column(JSON, nullable=True)  # Способности к коммуникации и сотрудничеству
-    attention_level = Column(JSON, nullable=True)  # Уровень внимания
-    memory_level = Column(JSON, nullable=True)  # Уровень памяти
-    problem_solving_skills = Column(JSON, nullable=True)  # Способности к решению задач
-    cognitive_tests = Column(JSON, nullable=True)  # Результаты тестов на когнитивное развитие
-    emotional_tests = Column(JSON, nullable=True)  # Результаты тестов на эмоциональное развитие
-
-    # Поля для физической активности и здоровья
-    physical_exercises = Column(JSON, nullable=True)  # Частота и тип физических упражнений или занятий спортом
-    daily_activity_level = Column(JSON, nullable=True)  # Уровень активности в течение дня
-    coordination_and_flexibility = Column(JSON, nullable=True)  # Оценка координации движений и физической гибкости
-    injuries_and_chronic_pains = Column(JSON, nullable=True)  # Присутствие травм или хронических болей
-    sports_achievements_and_interests = Column(JSON, nullable=True)  # Спортивные достижения и интересы
-
-    # Поля для учебных данных
-    academic_performance = Column(JSON, nullable=True)  # Оценки и успеваемость по предметам
-    academic_achievements = Column(JSON, nullable=True)  # Достижения и успехи в учебе
-    ework_time = Column(JSON, nullable=True)  # Время, проводимое на выполнение домашних заданий
-    attitude_towards_study = Column(JSON, nullable=True)  # Отношение к учебе и заданиям
-    areas_of_difficulty = Column(JSON, nullable=True)  # Особенности и трудности в определённых областях
-    additional_support_needs = Column(JSON, nullable=True)  # Потребности в дополнительной поддержке
-
-    # Поля для семейной информации и методов воспитания
-    family_info = Column(JSON, nullable=True)  # Информация о семье и родственниках
-    family_involvement = Column(JSON, nullable=True)  # Участие родителей и других членов семьи в жизни ребенка
-    parenting_methods = Column(JSON, nullable=True)  # Применяемые методы воспитания и их эффективность
-    behavior_and_discipline = Column(JSON, nullable=True)  # Установки на поведение и дисциплину
-    parental_attention_and_care = Column(JSON, nullable=True)  # Уровень внимания и заботы со стороны родителей
-
-    # Поля для информации о питании
-    dietary_info = Column(JSON, nullable=True)  # Информация о питании
-    snacking_habits = Column(JSON, nullable=True)  # Склонность к перекусам
-    beverage_consumption = Column(JSON, nullable=True)  # Потребление напитков
-    supplements_and_vitamins = Column(JSON, nullable=True)  # Назначенные добавки и витамины
-    reactions_to_food = Column(JSON, nullable=True)  # Реакция на определённые продукты
-    allergies_and_intolerances = Column(JSON, nullable=True)  # Информация о любых аллергиях или непереносимостях
-
+    date = Column(Date, nullable=False, default=datetime.now)  # Record date
+    feedback = Column(String(200), nullable=True)  # Feedback from parents or guardians
+    pulse_recovery_status = Column(String(100), nullable=True)  # Pulse recovery status
+    adolescence_info = Column(String(200), nullable=True)  # Information about adolescence
+    entry_type = Column(String, nullable=False)  # Record type (e.g., medical, psychological, etc.)
+    child_id = Column(Integer, ForeignKey('child.id'), nullable=False)  # Child identifier
     child = relationship(
-        'ChildProfile', back_populates='diary_entries'
+        'Child', back_populates='child_data'
     )
+
+class ChildMedical(Base):
+    """
+    Child Medical
+    """
+
+    # Fields for medical data
+    vaccinations = Column(JSON, nullable=True)  # Child's vaccinations, including dates and types
+    medications_and_procedures = Column(JSON, nullable=True)  # Medications and medical procedures
+    height = Column(Float, nullable=False)  # Child's height (possibly in "height" format)
+    weight = Column(Float, nullable=False)  # Child's weight (possibly in "weight" format)
+    blood_tests = Column(JSON, nullable=True)  # Results of blood tests
+    urine_tests = Column(JSON, nullable=True)  # Results of urine tests
+    other_tests = Column(JSON, nullable=True)  # Results of other medical tests (e.g., X-rays, MRIs)
+    blood_type = Column(SqlEnum(BloodType), nullable=True)  # Blood type
+    child = relationship(
+        "Child", back_populates="child_medical"
+    )
+
+class ChildHealthStatus(Base):
+    """
+    Child Health Status
+    """
+
+    # Fields for current health status and activity
+    current_symptoms = Column(JSON, nullable=True)  # Current symptoms or health issues
+    frequency_of_illnesses = Column(JSON, nullable=True)  # Frequency of colds, allergies, or other illnesses
+    doctor_visits = Column(JSON, nullable=True)  # History of doctor visits, including dates and reasons
+    stress_anxiety_depression = Column(JSON, nullable=True)  # Frequency and causes of stress, anxiety, or depression
+    emotional_state = Column(JSON, nullable=True)  # Overall emotional state (e.g., happiness, sadness)
+    child = relationship(
+        "Child", back_populates="child_health_status"
+    )
+
+class ChildDevelopment(Base):
+    """
+    Child Development
+    """
+
+    # Fields for development and interaction
+    peer_interactions = Column(JSON, nullable=True)  # Interaction with peers
+    communication_skills = Column(JSON, nullable=True)  # Communication and collaboration skills
+    attention_level = Column(JSON, nullable=True)  # Attention level
+    memory_level = Column(JSON, nullable=True)  # Memory level
+    problem_solving_skills = Column(JSON, nullable=True)  # Problem-solving skills
+    cognitive_tests = Column(JSON, nullable=True)  # Results of cognitive development tests
+    emotional_tests = Column(JSON, nullable=True)  # Results of emotional development tests
+    child = relationship(
+        "Child", back_populates="child_development"
+    )
+
+class ChildPhysicalActivity(Base):
+    """
+    Child Physical Activity
+    """
+
+    # Fields for physical activity and health
+    physical_exercises = Column(JSON, nullable=True)  # Frequency and type of physical exercises or sports activities
+    daily_activity_level = Column(JSON, nullable=True)  # Activity level throughout the day
+    coordination_and_flexibility = Column(JSON, nullable=True)  # Coordination and flexibility assessment
+    injuries_and_chronic_pains = Column(JSON, nullable=True)  # Presence of injuries or chronic pains
+    sports_achievements_and_interests = Column(JSON, nullable=True)  # Sports achievements and interests
+    child = relationship(
+        "Child", back_populates="child_physical_activity"
+    )
+
+class ChildAcademicData(Base):
+    """
+    Child Academic Data
+    """
+
+    # Fields for academic data
+    academic_performance = Column(JSON, nullable=True)  # Grades and performance in subjects
+    academic_achievements = Column(JSON, nullable=True)  # Achievements and successes in academics
+    ework_time = Column(JSON, nullable=True)  # Time spent on homework
+    attitude_towards_study = Column(JSON, nullable=True)  # Attitude towards studying and assignments
+    areas_of_difficulty = Column(JSON, nullable=True)  # Specific difficulties in certain areas
+    additional_support_needs = Column(JSON, nullable=True)  # Needs for additional support
+    subject_interest = Column(JSON, nullable=True)  # Interest in subjects
+    child = relationship(
+        "Child", back_populates="child_academic_data"
+    )
+
+class ChildFamilyData(Base):
+    """
+    Child Family Data
+    """
+
+    # Fields for family information and parenting methods
+    family_info = Column(JSON, nullable=True)  # Information about family and relatives
+    family_involvement = Column(JSON, nullable=True)  # Family involvement in the child's life
+    parenting_methods = Column(JSON, nullable=True)  # Parenting methods and their effectiveness
+    behavior_and_discipline = Column(JSON, nullable=True)  # Behavior and discipline practices
+    parental_attention_and_care = Column(JSON, nullable=True)  # Level of parental attention and care
+    child = relationship(
+        "Child", back_populates="child_family_data"
+    )
+
+class ChildNutritionData(Base):
+    """
+    Child Nutrition Data
+    """
+
+    # Fields for nutrition information
+    dietary_info = Column(JSON, nullable=True)  # Dietary information
+    snacking_habits = Column(JSON, nullable=True)  # Snacking habits
+    beverage_consumption = Column(JSON, nullable=True)  # Beverage consumption
+    supplements_and_vitamins = Column(JSON, nullable=True)  # Prescribed supplements and vitamins
+    reactions_to_food = Column(JSON, nullable=True)  # Reactions to specific foods
+    allergies_and_intolerances = Column(JSON, nullable=True)  # Information about allergies or intolerances
+    child = relationship(
+        "Child", back_populates="child_nutrition_data"
+    )
+
