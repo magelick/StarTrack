@@ -31,7 +31,7 @@ repos:
 
       - id: mypy  # Identifier of hook
         name: mypy  # Name of hook
-        entry: mypy --ignore-missing-imports --explicit-package-bases . # Command for start work hook
+        entry: mypy --ignore-missing-imports --explicit-package-bases --check-untyped-defs . # Command for start work hook
         language: system  # Hook will work with user command line system
         types: # Define type of file for checking
           - python  # .py-files
