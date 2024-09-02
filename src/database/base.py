@@ -1,4 +1,4 @@
-from sqlalchemy import SmallInteger, Column
+from sqlalchemy import Column, SMALLINT
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase, declared_attr
 
@@ -8,7 +8,7 @@ class Base(DeclarativeBase):
     Base Model
     """
 
-    id = Column(SmallInteger, primary_key=True)
+    id = Column(SMALLINT, primary_key=True)
 
     engine = create_async_engine(
         "postgresql+asyncpg://admin:qwerty@0.0.0.0:5432/star_track_bd",
