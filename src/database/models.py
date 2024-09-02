@@ -101,6 +101,24 @@ class Child(Base):
     child_medical_data: Mapped[list["ChildMedicalData"]] = relationship(
         argument="ChildMedicalData", back_populates="child"
     )
+    child_health_data: Mapped[list["ChildHealthData"]] = relationship(
+        argument="ChildHealthData", back_populates="child"
+    )
+    child_development_data: Mapped[list["ChildDevelopmentData"]] = (
+        relationship(argument="ChildDevelopmentData", back_populates="child")
+    )
+    child_physical_data: Mapped[list["ChildPhysicalData"]] = relationship(
+        argument="ChildPhysicalData", back_populates="child"
+    )
+    child_academic_data: Mapped[list["ChildAcademicData"]] = relationship(
+        argument="ChildAcademicData", back_populates="child"
+    )
+    child_family_data: Mapped[list["ChildFamilyData"]] = relationship(
+        argument="ChildFamilyData", back_populates="child"
+    )
+    child_nutrition_data: Mapped[list["ChildNutritionData"]] = relationship(
+        argument="ChildNutritionData", back_populates="child"
+    )
 
 
 class ChildData(Base):
@@ -197,7 +215,7 @@ class ChildHealthData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        "Child", back_populates="child_health_data"
+        argument="Child", back_populates="child_health_data"
     )
 
 
@@ -236,7 +254,7 @@ class ChildDevelopmentData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        "Child", back_populates="child_development_data"
+        argument="Child", back_populates="child_development_data"
     )
 
 
@@ -275,7 +293,7 @@ class ChildPhysicalData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        "Child", back_populates="child_physical_data"
+        argument="Child", back_populates="child_physical_data"
     )
 
 
