@@ -281,7 +281,7 @@ class ChildPhysicalData(Base):
     injuries_and_chronic_pains: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Presence of injuries or chronic pains
-    sports_achievements_and_interests: Mapped[str] = mapped_column(
+    sports_achievements: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Sports achievements
     interests: Mapped[str] = mapped_column(
@@ -320,7 +320,7 @@ class ChildAcademicData(Base):
     areas_of_difficulty: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Specific difficulties in certain areas
-    additional_support_needs: Mapped[str] = mapped_column(
+    additional_support_needs: Mapped[bool] = mapped_column(
         BOOLEAN, default=True, nullable=True
     )  # Needs for additional support
     subject_interest: Mapped[str] = mapped_column(
@@ -341,7 +341,9 @@ class ChildFamilyData(Base):
     Child family data model
     """
 
-    # Fields for family information and parenting methods
+    date: Mapped[DATE] = mapped_column(
+        DATE, nullable=False, default=datetime.now
+    )  # Record date
     family_info: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Information about family and relatives
@@ -366,7 +368,10 @@ class ChildNutritionData(Base):
     Child nutrition data model
     """
 
-    dietary_info: Mapped[int] = mapped_column(
+    date: Mapped[DATE] = mapped_column(
+        DATE, nullable=False, default=datetime.now
+    )  # Record date
+    dietary_info: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Dietary information
     snacking_habits: Mapped[bool] = mapped_column(
@@ -381,7 +386,7 @@ class ChildNutritionData(Base):
     reactions_to_food: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Reactions to specific foods
-    allergies_and_intolerances: Mapped[str] = mapped_column(
+    allergies_or_intolerances: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Information about allergies or intolerances
     child_id: Mapped[int] = mapped_column(

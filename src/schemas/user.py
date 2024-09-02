@@ -1,8 +1,9 @@
-import enum
 from datetime import datetime
 from typing import Optional
 
 from pydantic import Field, EmailStr, PositiveInt
+
+from src.database.enums import UserRoleEnum, UserSportTypeEnum
 from src.schemas.base import DTO
 from src.schemas.custom_types import AlphaStr
 
@@ -12,13 +13,13 @@ class UserBasic(DTO):
     Basic User schema
     """
 
-    first_name: AlphaStr = Field(
+    first_name: Optional[AlphaStr] = Field(
         default=None,
         max_length=100,
         title="User First Name",
         description="First name current user",
     )
-    last_name: AlphaStr = Field(
+    last_name: Optional[AlphaStr] = Field(
         default=None,
         max_length=100,
         title="User Last Name",
@@ -36,8 +37,11 @@ class UserBasic(DTO):
         title="User Password",
         description="Password current user",
     )
-    role: enum.Enum = Field(
+    role: UserRoleEnum = Field(
         default=..., title="User Role", description="Role current user"
+    )
+    sport_type: Optional[UserSportTypeEnum] = Field(
+        default=..., title="Sport Type", description="Sport Type current user"
     )
 
 

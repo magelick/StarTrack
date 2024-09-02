@@ -1,11 +1,11 @@
 import datetime
-import enum
-from typing import Union
+from typing import Union, Optional
 
 from pydantic import Field, PositiveInt
 
 from src.schemas.base import DTO
 from src.schemas.custom_types import AlphaStr
+from src.database.enums import ChildGenderEnum
 
 
 class ChildBasic(DTO):
@@ -15,29 +15,41 @@ class ChildBasic(DTO):
 
     first_name: AlphaStr = Field(
         default=...,
-        max_length=100,
-        title="Child First Name",
+        max_length=128,
+        title="First Name",
         description="First name current child",
     )
     last_name: AlphaStr = Field(
         default=...,
-        max_length=100,
-        title="Child Last Name",
+        max_length=128,
+        title="Last Name",
         description="Last name current child",
     )
     date_of_birth: datetime.date = Field(
         default=...,
-        title="Child Birthday",
+        title="Birthday",
         description="Birthday current child",
     )
-    gender: enum.Enum = Field(
-        default=..., title="Child Gender", description="Gender current child"
+    gender: ChildGenderEnum = Field(
+        default=..., title="Gender", description="Gender current child"
     )
     photo_url: str = Field(
         default=...,
-        max_length=200,
-        title="Child Photo",
+        max_length=256,
+        title="Photo",
         description="Photo current child",
+    )
+    illness_history: Optional[AlphaStr] = Field(
+        default=None,
+        max_length=256,
+        title="Illness History",
+        description="Illness History current child",
+    )
+    medical_diagnoses: Optional[AlphaStr] = Field(
+        default=None,
+        max_length=256,
+        title="Medical Diagnoses",
+        description="Medical Diagnoses current child",
     )
 
 
@@ -63,8 +75,8 @@ class ChildDetail(ChildBasic):
     """
 
     id: PositiveInt = Field(
-        default=..., title="Child ID", description="ID current child"
+        default=..., title="ID", description="ID current child"
     )
     age: Union[float, PositiveInt] = Field(
-        default=..., title="Child Age", description="Age current child"
+        default=..., title="Age", description="Age current child"
     )
