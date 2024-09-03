@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import Type
 
 from src.database.models import Base
 from src.repositories.models import (
@@ -16,21 +15,21 @@ from src.repositories.models import (
 )
 
 
-class IUnitOfWork(ABC):
+class AbstractUnitOfWork(ABC):
     """
     Abstract class for Unit Of Work pattern
     """
 
-    users: Type[UserRepository]
-    children: Type[ChildRepository]
-    child_datas: Type[ChildDataRepository]
-    child_medical_datas: Type[ChildMedicalDataRepository]
-    child_health_datas: Type[ChildHealthDataRepository]
-    child_development_datas: Type[ChildDevelopmentDataRepository]
-    child_physical_datas: Type[ChildPhysicalDataRepository]
-    child_academic_datas: Type[ChildAcademicDataRepository]
-    child_family_datas: Type[ChildFamilyDataRepository]
-    child_nutrition_datas: Type[ChildNutritionDataRepository]
+    users: UserRepository
+    children: ChildRepository
+    child_datas: ChildDataRepository
+    child_medical_datas: ChildMedicalDataRepository
+    child_health_datas: ChildHealthDataRepository
+    child_development_datas: ChildDevelopmentDataRepository
+    child_physical_datas: ChildPhysicalDataRepository
+    child_academic_datas: ChildAcademicDataRepository
+    child_family_datas: ChildFamilyDataRepository
+    child_nutrition_datas: ChildNutritionDataRepository
 
     @abstractmethod
     def __init__(self):
