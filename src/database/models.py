@@ -135,9 +135,12 @@ class ChildData(Base):
     pulse_recovery_status: Mapped[str] = mapped_column(
         VARCHAR(128), nullable=True
     )  # Pulse recovery status
-    adolescence_info: Mapped[str] = mapped_column(
-        VARCHAR(256), nullable=True
-    )  # Information about adolescence
+    # adolescence_info: Mapped[str] = mapped_column(
+    #     VARCHAR(256), nullable=True
+    # )  # Information about adolescence
+    start_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
+    peek_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
+    end_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
     entry_type: Mapped[str] = mapped_column(
         VARCHAR(128), nullable=False
     )  # Record type (e.g., medical, psychological, etc.)

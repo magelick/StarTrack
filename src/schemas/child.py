@@ -33,8 +33,8 @@ class ChildBasic(DTO):
     gender: ChildGenderEnum = Field(
         default=..., title="Gender", description="Gender current child"
     )
-    photo_url: str = Field(
-        default=...,
+    photo_url: Optional[str] = Field(
+        default=None,
         max_length=256,
         title="Photo",
         description="Photo current child",
