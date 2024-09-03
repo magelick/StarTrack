@@ -1,7 +1,11 @@
+from typing import AsyncGenerator
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.database.models import Base
 
 
-async def get_async_session():
+async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
     """
     Depend,which create session to database
     :return:
