@@ -51,6 +51,9 @@ class ChildBasic(DTO):
         title="Medical Diagnoses",
         description="Medical Diagnoses current child",
     )
+    age: Union[float, PositiveInt] = Field(
+        default=1, title="Age", description="Age current child"
+    )
 
 
 class ChildAddForm(ChildBasic):
@@ -76,7 +79,4 @@ class ChildDetail(ChildBasic):
 
     id: PositiveInt = Field(
         default=..., title="ID", description="ID current child"
-    )
-    age: Union[float, PositiveInt] = Field(
-        default=..., title="Age", description="Age current child"
     )
