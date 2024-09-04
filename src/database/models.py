@@ -72,6 +72,7 @@ class User(Base):
         argument="Child",
         secondary="user_child",
         back_populates="parents",
+        lazy="selectin",
     )
 
 
@@ -93,31 +94,38 @@ class Child(Base):
         VARCHAR(256), nullable=True
     )  # Child's medical diagnoses
     parents: Mapped[list["User"]] = relationship(
-        argument="User", secondary="user_child", back_populates="children"
+        argument="User",
+        secondary="user_child",
+        back_populates="children",
+        lazy="selectin",
     )
     child_data: Mapped[list["ChildData"]] = relationship(
-        argument="ChildData", back_populates="child"
+        argument="ChildData", back_populates="child", lazy="selectin"
     )
     child_medical_data: Mapped[list["ChildMedicalData"]] = relationship(
-        argument="ChildMedicalData", back_populates="child"
+        argument="ChildMedicalData", back_populates="child", lazy="selectin"
     )
     child_health_data: Mapped[list["ChildHealthData"]] = relationship(
-        argument="ChildHealthData", back_populates="child"
+        argument="ChildHealthData", back_populates="child", lazy="selectin"
     )
     child_development_data: Mapped[list["ChildDevelopmentData"]] = (
-        relationship(argument="ChildDevelopmentData", back_populates="child")
+        relationship(
+            argument="ChildDevelopmentData",
+            back_populates="child",
+            lazy="selectin",
+        )
     )
     child_physical_data: Mapped[list["ChildPhysicalData"]] = relationship(
-        argument="ChildPhysicalData", back_populates="child"
+        argument="ChildPhysicalData", back_populates="child", lazy="selectin"
     )
     child_academic_data: Mapped[list["ChildAcademicData"]] = relationship(
-        argument="ChildAcademicData", back_populates="child"
+        argument="ChildAcademicData", back_populates="child", lazy="selectin"
     )
     child_family_data: Mapped[list["ChildFamilyData"]] = relationship(
-        argument="ChildFamilyData", back_populates="child"
+        argument="ChildFamilyData", back_populates="child", lazy="selectin"
     )
     child_nutrition_data: Mapped[list["ChildNutritionData"]] = relationship(
-        argument="ChildNutritionData", back_populates="child"
+        argument="ChildNutritionData", back_populates="child", lazy="selectin"
     )
 
 
@@ -135,9 +143,7 @@ class ChildData(Base):
     pulse_recovery_status: Mapped[str] = mapped_column(
         VARCHAR(128), nullable=True
     )  # Pulse recovery status
-    # adolescence_info: Mapped[str] = mapped_column(
-    #     VARCHAR(256), nullable=True
-    # )  # Information about adolescence
+    # Information about adolescence
     start_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
     peek_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
     end_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
@@ -150,7 +156,7 @@ class ChildData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_data"
+        argument="Child", back_populates="child_data", lazy="joined"
     )
 
 
@@ -187,7 +193,7 @@ class ChildMedicalData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_medical_data"
+        argument="Child", back_populates="child_medical_data", lazy="joined"
     )
 
 
@@ -211,14 +217,16 @@ class ChildHealthData(Base):
     stress_anxiety_depression: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Frequency and causes of stress, anxiety, or depression
-    emotional_state: Mapped[ChildEmotionalStateEnum] = mapped_column(SQL_ENUM(ChildEmotionalStateEnum), nullable=True)  # type: ignore
+    emotional_state: Mapped[ChildEmotionalStateEnum] = mapped_column(
+        SQL_ENUM(ChildEmotionalStateEnum), nullable=True
+    )  # type: ignore
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
         ForeignKey(column="child.id", ondelete="CASCADE"),
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_health_data"
+        argument="Child", back_populates="child_health_data", lazy="joined"
     )
 
 
@@ -257,7 +265,9 @@ class ChildDevelopmentData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_development_data"
+        argument="Child",
+        back_populates="child_development_data",
+        lazy="joined",
     )
 
 
@@ -296,7 +306,7 @@ class ChildPhysicalData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_physical_data"
+        argument="Child", back_populates="child_physical_data", lazy="joined"
     )
 
 
@@ -335,7 +345,7 @@ class ChildAcademicData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_academic_data"
+        argument="Child", back_populates="child_academic_data", lazy="joined"
     )
 
 
@@ -353,16 +363,22 @@ class ChildFamilyData(Base):
     family_involvement: Mapped[str] = mapped_column(
         VARCHAR(128), nullable=True
     )  # Family involvement in the child's life
-    parenting_methods: Mapped[ChildParentingMethodsEnum] = mapped_column(SQL_ENUM(ChildParentingMethodsEnum), nullable=True)  # type: ignore
+    parenting_methods: Mapped[ChildParentingMethodsEnum] = mapped_column(
+        SQL_ENUM(ChildParentingMethodsEnum), nullable=True
+    )  # type: ignore
     # behavior_and_discipline = mapped_column(JSON, nullable=True)  # Behavior and discipline practices
-    parental_attention_and_care: Mapped[ChildParentalAttentionEnum] = mapped_column(SQL_ENUM(ChildParentalAttentionEnum), nullable=True)  # type: ignore
+    parental_attention_and_care: Mapped[
+        ChildParentalAttentionEnum
+    ] = mapped_column(
+        SQL_ENUM(ChildParentalAttentionEnum), nullable=True
+    )  # type: ignore
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
         ForeignKey(column="child.id", ondelete="CASCADE"),
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_family_data"
+        argument="Child", back_populates="child_family_data", lazy="joined"
     )
 
 
@@ -398,5 +414,5 @@ class ChildNutritionData(Base):
         nullable=False,
     )
     child = relationship(
-        argument="Child", back_populates="child_nutrition_data"
+        argument="Child", back_populates="child_nutrition_data", lazy="joined"
     )
