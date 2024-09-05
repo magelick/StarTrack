@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: 79e6f7a86f9b
+Revision ID: 71aac573269b
 Revises: ""
-Create Date: 2024-09-04 09:34:58.742351
+Create Date: 2024-09-05 11:12:17.128252
 
 """
 
@@ -11,9 +11,8 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-
 # revision identifiers, used by Alembic.
-revision: str = "79e6f7a86f9b"
+revision: str = "71aac573269b"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -50,7 +49,7 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("created_at", sa.TIMESTAMP(), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(), nullable=False),
+        sa.Column("updated_at", sa.TIMESTAMP(), nullable=True),
         sa.Column(
             "sport_type",
             sa.Enum(

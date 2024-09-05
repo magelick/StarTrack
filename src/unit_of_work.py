@@ -51,6 +51,10 @@ class AbstractUnitOfWork(ABC):
     async def rollback(self):
         pass
 
+    @abstractmethod
+    async def refresh(self, instance):
+        pass
+
 
 class UnitOfWork:
     """
@@ -87,3 +91,6 @@ class UnitOfWork:
 
     async def rollback(self):
         await self._session.rollback()
+
+    async def refresh(self, instance: object):
+        await self._session.refresh(instance=instance)

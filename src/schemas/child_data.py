@@ -23,11 +23,20 @@ class ChildDataBasic(DTO):
         title="Pulse Recovery Status",
         description="Pulse Recovery Status current child data",
     )
-    adolescence_info: Optional[AlphaStr] = Field(
-        default=None,
-        max_length=256,
-        title="Adolescence Info",
-        description="Adolescence Info current child data",
+    start_adolescence_age: float = Field(
+        default=...,
+        title="Start adolescence age",
+        description="Start adolescence age current child data",
+    )
+    peek_adolescence_age: float = Field(
+        default=...,
+        title="Peek adolescence age",
+        description="Peek adolescence age current child data",
+    )
+    end_adolescence_age: float = Field(
+        default=...,
+        title="End adolescence age",
+        description="End adolescence age current child data",
     )
     entry_type: AlphaStr = Field(
         default=...,
