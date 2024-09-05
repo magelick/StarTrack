@@ -132,7 +132,7 @@ async def calculate_seasonal_trends(diseases):
     Рассчитывается частота заболеваний по сезонам года.
     """
 
-async def get_season(date):
+async def get_season(date, diseases=None):
     """
     Определить сезон года по дате.
     """
