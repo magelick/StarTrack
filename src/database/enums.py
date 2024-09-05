@@ -103,7 +103,11 @@ class ChildParentingMethodsEnum(Enum):
     Enum class of Child parenting methods
     """
 
-    ...
+    STRICT = "Строгое воспитание"
+    SUPPORTIVE = "Поддерживающее воспитание"
+    LENIENT = "Мягкое воспитание"
+    INVOLVED = "Вовлечённое воспитание"
+    CARELESS = "Беспечное воспитание"
 
 
 class ChildParentalAttentionEnum(Enum):
@@ -115,3 +119,9 @@ class ChildParentalAttentionEnum(Enum):
     NOT_BAD = "Not bad"
     NOT_GOOD = "Not good"
     BAD = "Bad"
+
+class PulseRecoveryStatus(Enum):
+    GOOD = "Хорошо"
+    AVERAGE = "Средне"
+    POOR = "Плохо"
+    ERROR = "Ошибка в замере: пульс в положении стоя не может быть меньше пульса в положении лёжа. Пожалуйста, перепроверьте замер и повторите запись."
