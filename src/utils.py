@@ -132,19 +132,19 @@ async def calculate_seasonal_trends(diseases):
     Рассчитывается частота заболеваний по сезонам года.
     """
 
-    async def get_season(date):
-        """
-        Определить сезон года по дате.
-        """
-        month = date.month
-        if month in [12, 1, 2]:
-            return 'Зима'
-        elif month in [3, 4, 5]:
-            return 'Весна'
-        elif month in [6, 7, 8]:
-            return 'Лето'
-        elif month in [9, 10, 11]:
-            return 'Осень'
+async def get_season(date):
+    """
+    Определить сезон года по дате.
+    """
+    month = date.month
+    if month in [12, 1, 2]:
+        return 'Зима'
+    elif month in [3, 4, 5]:
+        return 'Весна'
+    elif month in [6, 7, 8]:
+        return 'Лето'
+    elif month in [9, 10, 11]:
+        return 'Осень'
 
     seasons = [get_season(datetime.strptime(disease[1], '%Y-%m-%d')) for disease in diseases]
 
@@ -204,10 +204,9 @@ async def interpret_bmi(bmi, gender):
     Интерпретирует ИМТ на основе возрастных и половых перцентильных таблиц.
     """
 
-    # Установим примеры перцентилей
     global interpretation
     if gender == "female":
-        if bmi < 16:  # Примерное значение для 5-го перцентиля (девочки)
+        if bmi < 16:
             interpretation = "Недостаточная масса тела"
         elif 16 <= bmi < 21:
             interpretation = "Нормальная масса тела"
@@ -216,7 +215,7 @@ async def interpret_bmi(bmi, gender):
         else:
             interpretation = "Ожирение"
     elif gender == "male":
-        if bmi < 16:  # Примерное значение для 5-го перцентиля (мальчики)
+        if bmi < 16:
             interpretation = "Недостаточная масса тела"
         elif 16 <= bmi < 22:
             interpretation = "Нормальная масса тела"
