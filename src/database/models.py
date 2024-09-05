@@ -60,19 +60,16 @@ class User(Base):
     password: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
     role: Mapped[UserRoleEnum] = mapped_column(SQL_ENUM(UserRoleEnum, name="user_role_enum"), nullable=False)  # type: ignore
     created_at: Mapped[TIMESTAMP] = mapped_column(
-        TIMESTAMP, default=datetime.now
+        TIMESTAMP, default=datetime.now, nullable=False
     )
     updated_at: Mapped[TIMESTAMP] = mapped_column(
-        TIMESTAMP, onupdate=datetime.now
+        TIMESTAMP, onupdate=datetime.now, nullable=True
     )
     sport_type: Mapped[UserSportTypeEnum] = mapped_column(SQL_ENUM(UserSportTypeEnum), nullable=True)  # type: ignore
     is_active: Mapped[bool] = mapped_column(BOOLEAN, default=True)
     terms_accepted: Mapped[bool] = mapped_column(BOOLEAN, default=False)
     children: Mapped[list["Child"]] = relationship(
-        argument="Child",
-        secondary="user_child",
-        back_populates="parents",
-        lazy="selectin",
+        argument="Child", secondary="user_child", back_populates="parents"
     )
 
 

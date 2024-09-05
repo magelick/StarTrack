@@ -5,7 +5,7 @@ from pydantic import Field, EmailStr, PositiveInt
 
 from src.database.enums import UserRoleEnum, UserSportTypeEnum
 from src.schemas.base import DTO
-from src.schemas.custom_types import AlphaStr
+from src.schemas.custom_types import AlphaStr, PasswordStr
 
 
 class UserBasic(DTO):
@@ -31,7 +31,7 @@ class UserBasic(DTO):
         title="User Email",
         description="Email current user",
     )
-    password = PasswordStr = Field(
+    password: PasswordStr = Field(
         default=...,
         max_length=128,
         title="User Password",
@@ -45,6 +45,41 @@ class UserBasic(DTO):
     )
 
 
+class UserRegisterForm(UserBasic):
+    """
+    User Register schema
+    """
+
+    ...
+
+
+class UserLoginForm(DTO):
+    """
+    User Login schema
+    """
+
+    email: EmailStr = Field(
+        default=...,
+        max_length=128,
+        title="User Email",
+        description="Email current user",
+    )
+    password: PasswordStr = Field(
+        default=...,
+        max_length=128,
+        title="User Password",
+        description="Password current user",
+    )
+
+
+class UserUpdateForm(UserBasic):
+    """
+    User Update form
+    """
+
+    ...
+
+
 class UserDetail(UserBasic):
     """
     User detail schema
@@ -54,11 +89,11 @@ class UserDetail(UserBasic):
         default=..., title="User ID", description="ID current user"
     )
     created_at: Optional[datetime] = Field(
-        default=datetime.now,
+        default_factory=datetime.now,
         title="User Created Time",
     )
     updated_at: Optional[datetime] = Field(
-        default=datetime.now,
+        default_factory=datetime.now,
         title="User Updated Time",
     )
     is_active: bool = Field(default=True, title="User Active Check")
