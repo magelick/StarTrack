@@ -1,24 +1,24 @@
-from typing import Dict
+from typing import Dict, List, Optional
 from datetime import datetime
 from collections import Counter
+from StarTrack.src.database.enums import PulseRecoveryStatus, ChildGenderEnum
 
 async def get_pulse_recovery_status(lying_pulse: int, standing_pulse: int) -> Dict[str, str]:
     """
     Get pulse recovery status based on pulse measurements.
     """
-    # Использовать Enum
     result = {}
 
     pulse_change = standing_pulse - lying_pulse
 
     if pulse_change < 0:
-        result['pulse_change'] = "Ошибка в замере: пульс в положении стоя не может быть меньше пульса в положении лёжа. Пожалуйста, перепроверьте замер и повторите запись."
+        result['pulse_change'] = PulseRecoveryStatus.ERROR.value
     elif pulse_change <= 11:
-        result['pulse_change'] = "Хорошо"
+        result['pulse_change'] = PulseRecoveryStatus.GOOD.value
     elif 12 <= pulse_change <= 21:
-        result['pulse_change'] = "Средне"
+        result['pulse_change'] = PulseRecoveryStatus.AVERAGE.value
     else:
-        result['pulse_change'] = "Плохо"
+        result['pulse_change'] = PulseRecoveryStatus.POOR.value
 
     return result
 
@@ -55,7 +55,7 @@ async def calculate_female_peek_age(current_age: float, standing_height: float, 
     return peak_age
 
 
-async def all_male_ages(current_age: float, peak_age: float, gender: str) -> Dict[str, float]:
+async def all_male_ages(current_age: float, peak_age: float, gender: ChildGenderEnum) -> Dict[str, float]:
     """
 
     :param current_age:
@@ -132,9 +132,10 @@ async def calculate_seasonal_trends(diseases):
     Рассчитывается частота заболеваний по сезонам года.
     """
 
-async def get_season(date, diseases=None):
+
+async def get_season(date: datetime, diseases: Optional[List] = None) -> str | dict[str, int]:
     """
-    Определить сезон года по дате.
+    Определить сезон года по дате. Возвращает строку с названием сезона.
     """
     month = date.month
     if month in [12, 1, 2]:
@@ -146,11 +147,10 @@ async def get_season(date, diseases=None):
     elif month in [9, 10, 11]:
         return 'Осень'
 
-    seasons = [get_season(datetime.strptime(disease[1], '%Y-%m-%d')) for disease in diseases]
-
-    season_frequency = Counter(seasons)
-
-    return dict(season_frequency)
+    if diseases:
+        seasons = [await get_season(datetime.strptime(disease[1], '%Y-%m-%d')) for disease in diseases]
+        season_frequency = Counter(seasons)
+        return dict(season_frequency)
 
 async def calculate_rohrer_index(weight_kg, height_cm):
     """
@@ -204,7 +204,8 @@ async def interpret_bmi(bmi, gender):
     Интерпретирует ИМТ на основе возрастных и половых перцентильных таблиц.
     """
 
-    global interpretation
+    interpretation = None
+
     if gender == "female":
         if bmi < 16:
             interpretation = "Недостаточная масса тела"
