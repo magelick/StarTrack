@@ -1,5 +1,97 @@
-from typing import Dict
-from datetime import datetime, date
+from typing import Dict, Union
+from datetime import datetime, date, timedelta
+
+import jwt
+from jwt import PyJWTError
+
+from src.settings import pwd_context, SETTINGS
+
+
+async def create_hash_password(password: str) -> str:
+    """
+    Create hash password
+    :param password:
+    :return:
+    """
+    return pwd_context.hash(password)
+
+
+async def verify_password(password: str, hash_password: str) -> bool:
+    """
+    Verify password
+    :param password:
+    :param hash_password:
+    :return:
+    """
+    return pwd_context.verify(secret=password, hash=hash_password)
+
+
+async def create_access_token(sub: Union[str, int]) -> str:
+    """
+    Create access token
+    :param sub:
+    :return:
+    """
+    return jwt.encode(
+        payload={
+            "sub": str(sub),
+            "exp": datetime.now()
+            + timedelta(minutes=SETTINGS.ACCESS_TOKEN_EXPIRE),
+        },
+        key=str(SETTINGS.SECRET_KEY_OF_ACCESS_TOKEN),
+        algorithm=SETTINGS.ALGORITHM,
+    )
+
+
+async def verify_access_token(access_token: str):
+    """
+    Verify access token
+    :param access_token:
+    :return:
+    """
+    try:
+        payload = jwt.decode(
+            access_token,
+            key=str(SETTINGS.SECRET_KEY_OF_ACCESS_TOKEN),
+            algorithms=[SETTINGS.ALGORITHM],
+        )
+    except PyJWTError:
+        return None
+    return payload
+
+
+async def create_refresh_token(sub: Union[str, int]) -> str:
+    """
+    Create refresh token
+    :param sub:
+    :return:
+    """
+    return jwt.encode(
+        payload={
+            "sub": str(sub),
+            "exp": datetime.now()
+            + timedelta(minutes=SETTINGS.REFRESH_TOKEN_EXPIRE),
+        },
+        key=str(SETTINGS.SECRET_KEY_OF_REFRESH_TOKEN),
+        algorithm=SETTINGS.ALGORITHM,
+    )
+
+
+async def verify_refresh_token(refresh_token: str):
+    """
+    Verify refresh token
+    :param refresh_token:
+    :return:
+    """
+    try:
+        payload = jwt.decode(
+            refresh_token,
+            key=str(SETTINGS.SECRET_KEY_OF_REFRESH_TOKEN),
+            algorithms=[SETTINGS.ALGORITHM],
+        )
+    except PyJWTError:
+        return None
+    return payload
 
 
 async def get_pulse_recovery_status(
@@ -8,7 +100,6 @@ async def get_pulse_recovery_status(
     """
     Get pulse recovery status based on pulse measurements.
     """
-    # Использовать Enum
     result = {}
 
     pulse_change = standing_pulse - lying_pulse
