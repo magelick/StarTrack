@@ -9,6 +9,7 @@ from redis.asyncio import Redis
 
 from src.settings import SETTINGS
 from src.api.router import router as api_router
+from src.middlewares import MIDDLEWARES
 
 
 @asynccontextmanager
@@ -38,7 +39,12 @@ app = FastAPI(
     default_response_class=ORJSONResponse,
     lifespan=lifespan,
 )
+# Include routers
 app.include_router(router=api_router)
+
+# Add all custom middlewares
+for MIDDLEWARE, OPTIONS in MIDDLEWARES:
+    app.add_middleware(MIDDLEWARE, **OPTIONS)
 
 
 if __name__ == "__main__":
