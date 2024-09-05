@@ -25,6 +25,7 @@ from src.database.enums import (
     ChildTowardStudyEnum,
     ChildParentingMethodsEnum,
     ChildParentalAttentionEnum,
+    BehaviorDisciplineEnum
 )
 
 
@@ -176,7 +177,9 @@ class ChildMedicalData(Base):
     urine_tests: Mapped[int] = mapped_column(
         INT, nullable=True
     )  # Results of urine tests
-    # other_tests = mapped_column(JSON, nullable=True)  # Results of other medical tests (e.g., X-rays, MRIs)
+    genetic_test_results: Mapped[str] = mapped_column(
+        VARCHAR(512), nullable=True
+    )  # Results of genetic test, stored as a string or a link to a more detailed report
     blood_type: Mapped[ChildBloodTypeEnum] = mapped_column(SQL_ENUM(ChildBloodTypeEnum), nullable=True)  # type: ignore
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
@@ -349,7 +352,8 @@ class ChildFamilyData(Base):
         VARCHAR(128), nullable=True
     )  # Family involvement in the child's life
     parenting_methods: Mapped[ChildParentingMethodsEnum] = mapped_column(SQL_ENUM(ChildParentingMethodsEnum), nullable=True)  # type: ignore
-    # behavior_and_discipline = mapped_column(JSON, nullable=True)  # Behavior and discipline practices
+    behavior_and_discipline = mapped_column(SQL_ENUM(BehaviorDisciplineEnum), nullable=True
+    ) # Behavior and discipline practices
     parental_attention_and_care: Mapped[ChildParentalAttentionEnum] = mapped_column(SQL_ENUM(ChildParentalAttentionEnum), nullable=True)  # type: ignore
     child_id: Mapped[int] = mapped_column(
         SMALLINT,

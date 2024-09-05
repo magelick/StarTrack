@@ -3,24 +3,21 @@ from datetime import datetime
 from collections import Counter
 from StarTrack.src.database.enums import PulseRecoveryStatus, ChildGenderEnum
 
+
 async def get_pulse_recovery_status(lying_pulse: int, standing_pulse: int) -> Dict[str, str]:
     """
     Get pulse recovery status based on pulse measurements.
     """
-    result = {}
-
     pulse_change = standing_pulse - lying_pulse
 
     if pulse_change < 0:
-        result['pulse_change'] = PulseRecoveryStatus.ERROR.value
+        return {'pulse_change': PulseRecoveryStatus.ERROR.value}
     elif pulse_change <= 11:
-        result['pulse_change'] = PulseRecoveryStatus.GOOD.value
+        return {'pulse_change': PulseRecoveryStatus.GOOD.value}
     elif 12 <= pulse_change <= 21:
-        result['pulse_change'] = PulseRecoveryStatus.AVERAGE.value
+        return {'pulse_change': PulseRecoveryStatus.AVERAGE.value}
     else:
-        result['pulse_change'] = PulseRecoveryStatus.POOR.value
-
-    return result
+        return {'pulse_change': PulseRecoveryStatus.POOR.value}
 
 
 async def calculate_male_peek_age(current_age: float, standing_height: float, sitting_height: float, body_mass: float) -> float:
