@@ -1,5 +1,8 @@
 from collections import Counter
-from src.database.enums import ChildPulseRecoveryStatusEnum, ChildGenderEnum
+from StarTrack.src.database.enums import (
+    ChildPulseRecoveryStatusEnum,
+    ChildGenderEnum,
+)
 
 from typing import Dict, Union
 from datetime import datetime, date, timedelta
@@ -7,7 +10,10 @@ from datetime import datetime, date, timedelta
 import jwt
 from jwt import PyJWTError
 
-from src.settings import pwd_context, SETTINGS
+from StarTrack.src.settings import pwd_context, SETTINGS
+
+
+# from src.settings import pwd_context, SETTINGS
 
 
 async def create_hash_password(password: str) -> str:
