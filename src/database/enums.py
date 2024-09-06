@@ -103,7 +103,11 @@ class ChildParentingMethodsEnum(Enum):
     Enum class of Child parenting methods
     """
 
-    ...
+    STRICT = "Strict nurturing"
+    SUPPORTIVE = "Supprotive nurturing"
+    LENIENT = "Lenient nurturing"
+    INVOLVED = "Involved nurturing"
+    CARELESS = "Careless nurturing"
 
 
 class ChildParentalAttentionEnum(Enum):
@@ -117,6 +121,16 @@ class ChildParentalAttentionEnum(Enum):
     BAD = "Bad"
 
 
+class ChildPulseRecoveryStatus(Enum):
+    """
+    Enum class of Child pulse recovery status
+    """
+    GOOD = "Good"
+    AVERAGE = "Average"
+    POOR = "Poor"
+    ERROR = "Error in measurement"
+
+
 class ChildBehaviorDisciplineEnum(Enum):
     """
     Enum class for child behavior and discipline status
@@ -126,15 +140,4 @@ class ChildBehaviorDisciplineEnum(Enum):
     GOOD = "Good"
     AVERAGE = "Average"
     NEEDS_IMPROVEMENT = "Needs Improvement"
-    POOR = "Poor"
-
-
-class ChildPulseRecoveryStatusEnum(Enum):
-    """
-    Enum class for child pulse recovery status
-    """
-
-    ERROR = "Error"
-    GOOD = "Good"
-    AVERAGE = "Average"
     POOR = "Poor"
