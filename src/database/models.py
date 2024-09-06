@@ -25,7 +25,7 @@ from src.database.enums import (
     ChildTowardStudyEnum,
     ChildParentingMethodsEnum,
     ChildParentalAttentionEnum,
-    BehaviorDisciplineEnum
+    ChildBehaviorDisciplineEnum,
 )
 
 
@@ -372,8 +372,15 @@ class ChildFamilyData(Base):
         VARCHAR(128), nullable=True
     )  # Family involvement in the child's life
     parenting_methods: Mapped[ChildParentingMethodsEnum] = mapped_column(SQL_ENUM(ChildParentingMethodsEnum), nullable=True)  # type: ignore
-    behavior_and_discipline = mapped_column(SQL_ENUM(BehaviorDisciplineEnum), nullable=True
-    ) # Behavior and discipline practices
+    behavior_and_discipline: Mapped[ChildBehaviorDisciplineEnum] = (
+        mapped_column(
+            SQL_ENUM(
+                ChildBehaviorDisciplineEnum,
+                name="child_behavior_and_discipline_enum",
+            ),
+            nullable=True,
+        )
+    )  # Behavior and discipline practices
     parental_attention_and_care: Mapped[ChildParentalAttentionEnum] = mapped_column(SQL_ENUM(ChildParentalAttentionEnum), nullable=True)  # type: ignore
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
