@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard-container">
+  <h2 class="dashboard-title">Панель управления родителя</h2>
+  <div class="children-list">
+    {% for child in children %}
+    <a href="{{ url_for('diary', child_id=child.id) }}" class="children-item">
+      <img src="{{ child.photo_url or url_for('static', filename='icons/default_child_photo.jpg') }}" alt="{{ child.name }}" class="children-photo">
+      <div class="children-info">
+        <p class="children-name">{{ child.name }}</p>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  <a href="{{ url_for('create_profile') }}" class="add-profile-button">+ добавить</a>
+</div>
+{% endblock %}

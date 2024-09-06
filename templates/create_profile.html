@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Создать профиль ребенка</h2>
+<form method="POST" action="{{ url_for('create_profile') }}">
+  <label for="name">Имя ребенка</label>
+  <input type="text" id="name" name="name" required>
+
+  <label for="date_of_birth">Дата рождения</label>
+  <input type="date" id="date_of_birth" name="date_of_birth" required>
+
+  <label for="gender">Пол</label>
+  <select id="gender" name="gender" required>
+    <option value="male">Мужской</option>
+    <option value="female">Женский</option>
+  </select>
+
+  <button type="submit">Создать профиль</button>
+</form>
+{% endblock %}
