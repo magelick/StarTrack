@@ -3,6 +3,7 @@ from typing import Optional
 
 from pydantic import Field, PositiveInt
 
+from src.database.enums import ChildPulseRecoveryStatusEnum
 from src.schemas.base import DTO
 from src.schemas.custom_types import AlphaStr
 
@@ -17,9 +18,8 @@ class ChildDataBasic(DTO):
         title="Feedback",
         description="Feedback current child data",
     )
-    pulse_recovery_status: Optional[AlphaStr] = Field(
+    pulse_recovery_status: Optional[ChildPulseRecoveryStatusEnum] = Field(
         default=None,
-        max_length=128,
         title="Pulse Recovery Status",
         description="Pulse Recovery Status current child data",
     )

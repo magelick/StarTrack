@@ -18,6 +18,7 @@ from src.database.enums import (
     UserRoleEnum,
     UserSportTypeEnum,
     ChildGenderEnum,
+    ChildPulseRecoveryStatusEnum,
     ChildBloodTypeEnum,
     ChildEmotionalStateEnum,
     ChildDevelopmentEnum,
@@ -82,7 +83,6 @@ class Child(Base):
     first_name: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
     last_name: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
     date_of_birth: Mapped[DATE] = mapped_column(DATE, nullable=False)
-    age: Mapped[int] = mapped_column(INT, nullable=False)  # type: ignore
     gender: Mapped[ChildGenderEnum] = mapped_column(SQL_ENUM(ChildGenderEnum, name="child_gender_enum"), nullable=False)  # type: ignore
     photo_url: Mapped[str] = mapped_column(VARCHAR(256), nullable=True)
     illness_history: Mapped[str] = mapped_column(
@@ -136,16 +136,20 @@ class ChildData(Base):
     feedback: Mapped[str] = mapped_column(
         TEXT, nullable=True
     )  # Feedback from parents or guardians
-    pulse_recovery_status: Mapped[str] = mapped_column(
-        VARCHAR(128), nullable=True
+    pulse_recovery_status: Mapped[ChildPulseRecoveryStatusEnum] = (
+        mapped_column(
+            SQL_ENUM(
+                ChildPulseRecoveryStatusEnum,
+                name="child_pulse_recovery_status_enum",
+            ),
+            nullable=True,
+        )
     )  # Pulse recovery status
-    # Information about adolescence
+    # Information about ages
+    current_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
     start_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
     peek_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
     end_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
-    entry_type: Mapped[str] = mapped_column(
-        VARCHAR(128), nullable=False
-    )  # Record type (e.g., medical, psychological, etc.)
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
         ForeignKey(column="child.id", ondelete="CASCADE"),
@@ -175,6 +179,15 @@ class ChildMedicalData(Base):
     weight: Mapped[float] = mapped_column(
         FLOAT, nullable=False
     )  # Child's weight (possibly in "weight" format)
+    height_weight_ratio: Mapped[float] = mapped_column(
+        FLOAT, nullable=False
+    )  # height weight ratio
+    bsa_index: Mapped[float] = mapped_column(
+        FLOAT, nullable=False
+    )  # bsa index
+    rohrer_index: Mapped[float] = mapped_column(
+        FLOAT, nullable=False
+    )  # rohler index
     blood_tests: Mapped[int] = mapped_column(
         INT, nullable=True
     )  # Results of blood tests
@@ -343,6 +356,12 @@ class ChildAcademicData(Base):
     additional_support_needs: Mapped[bool] = mapped_column(
         BOOLEAN, default=True, nullable=True
     )  # Needs for additional support
+    subject_gpa: Mapped[float] = mapped_column(
+        FLOAT, nullable=False
+    )  # subject gpa
+    progress_ratio: Mapped[float] = mapped_column(
+        FLOAT, nullable=False
+    )  # progress subject gpa ratio
     subject_interest: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Interest in subjects
