@@ -6,8 +6,8 @@ class UserRoleEnum(Enum):
     Enum class for User role
     """
 
-    PARENT = "parent"
-    COACH = "coach"
+    PARENT = "Parent"
+    COACH = "Coach"
 
 
 class UserSportTypeEnum(Enum):
@@ -116,9 +116,25 @@ class ChildParentalAttentionEnum(Enum):
     NOT_GOOD = "Not good"
     BAD = "Bad"
 
-class BehaviorDisciplineEnum(Enum):
+
+class ChildBehaviorDisciplineEnum(Enum):
+    """
+    Enum class for child behavior and discipline status
+    """
+
     EXCELLENT = "Excellent"
     GOOD = "Good"
     AVERAGE = "Average"
     NEEDS_IMPROVEMENT = "Needs Improvement"
+    POOR = "Poor"
+
+
+class ChildPulseRecoveryStatusEnum(Enum):
+    """
+    Enum class for child pulse recovery status
+    """
+
+    ERROR = "Error"
+    GOOD = "Good"
+    AVERAGE = "Average"
     POOR = "Poor"
