@@ -354,28 +354,28 @@ async def interpret_bmi(bmi, gender: ChildGenderEnum):
     Интерпретирует ИМТ на основе возрастных и половых перцентильных таблиц.
     """
 
-    interpretation = None
+    result = None
 
-    if gender == "female":
+    if gender == ChildGenderEnum.FEMALE:
         if bmi < 16:
-            interpretation = "Недостаточная масса тела"
+            result = "Недостаточная масса тела"
         elif 16 <= bmi < 21:
-            interpretation = "Нормальная масса тела"
+            result = "Нормальная масса тела"
         elif 21 <= bmi < 25:
-            interpretation = "Избыточная масса тела"
+            result = "Избыточная масса тела"
         else:
-            interpretation = "Ожирение"
-    elif gender == "male":
+            result = "Ожирение"
+    elif gender == ChildGenderEnum.MALE:
         if bmi < 16:
-            interpretation = "Недостаточная масса тела"
+            result = "Недостаточная масса тела"
         elif 16 <= bmi < 22:
-            interpretation = "Нормальная масса тела"
+            result = "Нормальная масса тела"
         elif 22 <= bmi < 26:
-            interpretation = "Избыточная масса тела"
+            result = "Избыточная масса тела"
         else:
-            interpretation = "Ожирение"
+            result = "Ожирение"
 
-    return interpretation
+    return result
 
 
 async def calculate_bmi(weight_kg, height_m):
@@ -406,13 +406,13 @@ async def get_quarter(month):
     Определяет номер четверти на основе месяца в учебном году.
     """
     if month in [9, 10]:
-        return 1  # Первая четверть: сентябрь — октябрь
+        return "1"  # Первая четверть: сентябрь — октябрь
     elif month in [11, 12]:
-        return 2  # Вторая четверть: ноябрь — декабрь
+        return "2"  # Вторая четверть: ноябрь — декабрь
     elif month in [1, 2, 3]:
-        return 3  # Третья четверть: январь — март
+        return "3"  # Третья четверть: январь — март
     elif month in [4, 5]:
-        return 4  # Четвертая четверть: апрель — май
+        return "4"  # Четвертая четверть: апрель — май
     else:
         return "Летний период"
 
@@ -443,9 +443,9 @@ async def analyze_performance(dates, grades):
     if not dates or not grades:
         return None
 
-    quarters = [await get_quarter(date[0]) for date in dates]
+    quarters = [await get_quarter(item_date[0]) for item_date in dates]
 
-    quarter_map = {1: 1, 2: 2, 3: 3, 4: 4}
+    quarter_map = {"1": 1, "2": 2, "3": 3, "4": 4}
     numeric_quarters = [quarter_map[q] for q in quarters if q in quarter_map]
 
     if len(numeric_quarters) != len(grades):
