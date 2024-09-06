@@ -1,8 +1,5 @@
-
-from typing import Dict, List, Optional
-from datetime import datetime
 from collections import Counter
-from StarTrack.src.database.enums import PulseRecoveryStatus, ChildGenderEnum
+from src.database.enums import ChildPulseRecoveryStatusEnum, ChildGenderEnum
 
 from typing import Dict, Union
 from datetime import datetime, date, timedelta
@@ -11,22 +8,6 @@ import jwt
 from jwt import PyJWTError
 
 from src.settings import pwd_context, SETTINGS
-
-
-async def get_pulse_recovery_status(lying_pulse: int, standing_pulse: int) -> Dict[str, str]:
-    """
-    Get pulse recovery status based on pulse measurements.
-    """
-    pulse_change = standing_pulse - lying_pulse
-
-    if pulse_change < 0:
-        return {'pulse_change': PulseRecoveryStatus.ERROR.value}
-    elif pulse_change <= 11:
-        return {'pulse_change': PulseRecoveryStatus.GOOD.value}
-    elif 12 <= pulse_change <= 21:
-        return {'pulse_change': PulseRecoveryStatus.AVERAGE.value}
-    else:
-        return {'pulse_change': PulseRecoveryStatus.POOR.value}
 
 
 async def create_hash_password(password: str) -> str:
@@ -116,6 +97,24 @@ async def verify_refresh_token(refresh_token: str):
     return payload
 
 
+async def get_pulse_recovery_status(
+    lying_pulse: int, standing_pulse: int
+) -> ChildPulseRecoveryStatusEnum:
+    """
+    Get pulse recovery status based on pulse measurements.
+    """
+    pulse_change = standing_pulse - lying_pulse
+
+    if pulse_change < 0:
+        return ChildPulseRecoveryStatusEnum.ERROR
+    elif pulse_change <= 11:
+        return ChildPulseRecoveryStatusEnum.GOOD
+    elif 12 <= pulse_change <= 21:
+        return ChildPulseRecoveryStatusEnum.AVERAGE
+    else:
+        return ChildPulseRecoveryStatusEnum.POOR
+
+
 async def calculate_male_peek_age(
     current_age: float,
     standing_height: float,
@@ -165,16 +164,17 @@ async def calculate_female_peek_age(
     return peak_age
 
 
-
-async def all_male_ages(current_age: float, peak_age: float, gender: ChildGenderEnum) -> Dict[str, float]:
+async def all_male_ages(
+    current_age: float, peak_age: float, gender: ChildGenderEnum
+) -> Dict[str, float]:
     """
-
+    Get all ages for males
     :param current_age:
     :param peak_age:
     :param gender:
     :return:
     """
-    if gender == "male":
+    if gender == ChildGenderEnum.MALE:
         start_age = peak_age - 1
         end_age = peak_age + 2
     else:
@@ -182,7 +182,9 @@ async def all_male_ages(current_age: float, peak_age: float, gender: ChildGender
         end_age = peak_age + 2
 
     return {
-        "current_age": round(current_age, 2),
+        "current_age": round(
+            current_age, 2
+        ),  # Для чего нужно выводить возраст в виде float в данной функции?
         "start_age": round(start_age, 2),
         "peak_age": round(peak_age, 2),
         "end_age": round(end_age, 2),
@@ -209,7 +211,7 @@ async def calculate_adolescence_info(
 
     current_age = age_years + age_months / 12
 
-    if gender == "male":
+    if gender == ChildGenderEnum.MALE:
         male_peak_age = await calculate_male_peek_age(
             current_age=current_age,
             sitting_height=sitting_height,
@@ -220,7 +222,7 @@ async def calculate_adolescence_info(
             current_age=current_age, peak_age=male_peak_age, gender=gender
         )
         return all_ages
-    else:
+    elif gender == ChildGenderEnum.FEMALE:
         female_peak_age = await calculate_female_peek_age(
             current_age=current_age,
             sitting_height=sitting_height,
@@ -231,56 +233,71 @@ async def calculate_adolescence_info(
             current_age=current_age, peak_age=female_peak_age, gender=gender
         )
         return all_ages
+    else:
+        raise ValueError(f"Invalid gender: {gender}")
 
-async def calculate_disease_frequency(diseases, start_date=None, end_date=None):
+
+async def calculate_disease_frequency(
+    diseases, start_date=None, end_date=None
+):
     """
     Рассчитать частоту заболеваний за определённый период времени.
     """
-    dates = [datetime.strptime(disease[1], '%Y-%m-%d') for disease in diseases]
+    dates = [datetime.strptime(disease[1], "%Y-%m-%d") for disease in diseases]
 
     if start_date is None:
         start_date = min(dates)
     else:
-        start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        start_date = datetime.strptime(start_date, "%Y-%m-%d")
 
     if end_date is None:
         end_date = max(dates)
     else:
-        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        end_date = datetime.strptime(end_date, "%Y-%m-%d")
 
     filtered_diseases = [
-        disease[0] for disease in diseases
-        if start_date <= datetime.strptime(disease[1], '%Y-%m-%d') <= end_date
+        disease[0]
+        for disease in diseases
+        if start_date <= datetime.strptime(disease[1], "%Y-%m-%d") <= end_date
     ]
 
     disease_frequency = Counter(filtered_diseases)
 
     return dict(disease_frequency)
 
+
+async def get_season(
+    date_data: datetime,
+) -> str | dict[str, int]:
+    """
+    Определить сезон года по дате. Возвращает строку с названием сезона.
+    """
+    month = date_data.month
+    if month in [12, 1, 2]:
+        return "Зима"
+    elif month in [3, 4, 5]:
+        return "Весна"
+    elif month in [6, 7, 8]:
+        return "Лето"
+    elif month in [9, 10, 11]:
+        return "Осень"
+    else:
+        raise ValueError(f"Invalid date_data: {date_data}")
+
+
 async def calculate_seasonal_trends(diseases):
     """
     Рассчитывается частота заболеваний по сезонам года.
     """
 
-
-async def get_season(date: datetime, diseases: Optional[List] = None) -> str | dict[str, int]:
-    """
-    Определить сезон года по дате. Возвращает строку с названием сезона.
-    """
-    month = date.month
-    if month in [12, 1, 2]:
-        return 'Зима'
-    elif month in [3, 4, 5]:
-        return 'Весна'
-    elif month in [6, 7, 8]:
-        return 'Лето'
-    elif month in [9, 10, 11]:
-        return 'Осень'
-
     if diseases:
-        seasons = [await get_season(datetime.strptime(disease[1], '%Y-%m-%d')) for disease in diseases]
+        seasons = [
+            await get_season(datetime.strptime(disease[1], "%Y-%m-%d"))
+            for disease in diseases
+        ]
         season_frequency = Counter(seasons)
         return dict(season_frequency)
+
 
 async def calculate_rohrer_index(weight_kg, height_cm):
     """
@@ -288,7 +305,7 @@ async def calculate_rohrer_index(weight_kg, height_cm):
     """
     weight_grams = weight_kg * 1000
 
-    rohrer_index = (weight_grams / (height_cm ** 3)) * 10 ** 7
+    rohrer_index = (weight_grams / (height_cm**3)) * 10**7
 
     if rohrer_index < 1.2:
         interpretation = "Недостаточный вес"
@@ -315,9 +332,12 @@ async def calculate_bsa(height_cm, weight_kg):
     Рассчитывает площадь поверхности тела (BSA) на основе роста и веса
     """
 
-    bsa = 0.007184 * (height_cm ** 0.725) * (weight_kg ** 0.425)  # Формула для расчета BSA
+    bsa = (
+        0.007184 * (height_cm**0.725) * (weight_kg**0.425)
+    )  # Формула для расчета BSA
 
     return bsa
+
 
 async def calculate_ideal_body_weight(height_cm, age_years):
     """
@@ -329,7 +349,7 @@ async def calculate_ideal_body_weight(height_cm, age_years):
     return ideal_weight
 
 
-async def interpret_bmi(bmi, gender):
+async def interpret_bmi(bmi, gender: ChildGenderEnum):
     """
     Интерпретирует ИМТ на основе возрастных и половых перцентильных таблиц.
     """
@@ -363,20 +383,9 @@ async def calculate_bmi(weight_kg, height_m):
     Рассчитывает индекс массы тела (ИМТ) на основе веса и роста.
     """
 
-    bmi = weight_kg / (height_m ** 2)  # Формула для расчета ИМТ
+    bmi = weight_kg / (height_m**2)
 
     return bmi
-
-
-async def calculate_bmi_with_interpretation(weight_kg, height_m, age_years, gender):
-    """
-    Рассчитывает ИМТ и возвращает его интерпретацию на основе возраста и пола.
-    """
-
-    bmi = calculate_bmi(weight_kg, height_m)
-    interpretation = interpret_bmi(bmi, age_years, gender)
-
-    return bmi, interpretation
 
 
 async def calculate_subject_gpa(grades):
@@ -391,6 +400,7 @@ async def calculate_subject_gpa(grades):
 
     return subject_gpa
 
+
 async def get_quarter(month):
     """
     Определяет номер четверти на основе месяца в учебном году.
@@ -404,7 +414,8 @@ async def get_quarter(month):
     elif month in [4, 5]:
         return 4  # Четвертая четверть: апрель — май
     else:
-        return 'Летний период'
+        return "Летний период"
+
 
 async def linear_regression_quarters(quarters, grades, np=None):
     """
@@ -419,10 +430,11 @@ async def linear_regression_quarters(quarters, grades, np=None):
     y = np.array(grades)
 
     # Расчет коэффициентов линейной регрессии
-    A = np.vstack([x, np.ones(len(x))]).T
-    m, b = np.linalg.lstsq(A, y, rcond=None)[0]
+    a = np.vstack([x, np.ones(len(x))]).T
+    m, b = np.linalg.lstsq(a, y, rcond=None)[0]
 
     return m, b
+
 
 async def analyze_performance(dates, grades):
     """
@@ -469,7 +481,9 @@ async def calculate_pearson_correlation(x, y, np=None):
 
     # Вычисление числителя и знаменателя
     numerator = np.sum((x - x_mean) * (y - y_mean))
-    denominator = np.sqrt(np.sum((x - x_mean) ** 2) * np.sum((y - y_mean) ** 2))
+    denominator = np.sqrt(
+        np.sum((x - x_mean) ** 2) * np.sum((y - y_mean) ** 2)
+    )
 
     if denominator == 0:
         return None
@@ -495,4 +509,3 @@ async def predict_final_grade(grades, np=None):
     predicted_grade = np.mean(grades)
 
     return predicted_grade
-
