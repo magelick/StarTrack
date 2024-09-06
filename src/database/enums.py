@@ -6,8 +6,8 @@ class UserRoleEnum(Enum):
     Enum class for User role
     """
 
-    PARENT = "parent"
-    COACH = "coach"
+    PARENT = "Parent"
+    COACH = "Coach"
 
 
 class UserSportTypeEnum(Enum):
@@ -103,11 +103,11 @@ class ChildParentingMethodsEnum(Enum):
     Enum class of Child parenting methods
     """
 
-    STRICT = "Строгое воспитание"
-    SUPPORTIVE = "Поддерживающее воспитание"
-    LENIENT = "Мягкое воспитание"
-    INVOLVED = "Вовлечённое воспитание"
-    CARELESS = "Беспечное воспитание"
+    STRICT = "Strict nurturing"
+    SUPPORTIVE = "Supprotive nurturing"
+    LENIENT = "Lenient nurturing"
+    INVOLVED = "Involved nurturing"
+    CARELESS = "Careless nurturing"
 
 
 class ChildParentalAttentionEnum(Enum):
@@ -120,8 +120,24 @@ class ChildParentalAttentionEnum(Enum):
     NOT_GOOD = "Not good"
     BAD = "Bad"
 
-class PulseRecoveryStatus(Enum):
-    GOOD = "Хорошо"
-    AVERAGE = "Средне"
-    POOR = "Плохо"
-    ERROR = "Ошибка в замере: пульс в положении стоя не может быть меньше пульса в положении лёжа. Пожалуйста, перепроверьте замер и повторите запись."
+
+class ChildPulseRecoveryStatus(Enum):
+    """
+    Enum class of Child pulse recovery status
+    """
+    GOOD = "Good"
+    AVERAGE = "Average"
+    POOR = "Poor"
+    ERROR = "Error in measurement"
+
+
+class ChildBehaviorDisciplineEnum(Enum):
+    """
+    Enum class for child behavior and discipline status
+    """
+
+    EXCELLENT = "Excellent"
+    GOOD = "Good"
+    AVERAGE = "Average"
+    NEEDS_IMPROVEMENT = "Needs Improvement"
+    POOR = "Poor"
