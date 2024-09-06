@@ -1,6 +1,6 @@
 from sqlalchemy import (
     VARCHAR,
-    DATETIME,
+    TIMESTAMP,
     BOOLEAN,
     DATE,
     ForeignKey,
@@ -25,6 +25,7 @@ from src.database.enums import (
     ChildTowardStudyEnum,
     ChildParentingMethodsEnum,
     ChildParentalAttentionEnum,
+    ChildBehaviorDisciplineEnum,
 )
 
 
@@ -58,20 +59,18 @@ class User(Base):
         VARCHAR(128), unique=True, nullable=False
     )
     password: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
-    role: Mapped[UserRoleEnum] = mapped_column(SQL_ENUM(UserRoleEnum), nullable=False)  # type: ignore
-    created_at: Mapped[datetime] = mapped_column(
-        DATETIME, default=datetime.now
+    role: Mapped[UserRoleEnum] = mapped_column(SQL_ENUM(UserRoleEnum, name="user_role_enum"), nullable=False)  # type: ignore
+    created_at: Mapped[TIMESTAMP] = mapped_column(
+        TIMESTAMP, default=datetime.now, nullable=False
     )
-    updated_at: Mapped[datetime] = mapped_column(
-        DATETIME, onupdate=datetime.now
+    updated_at: Mapped[TIMESTAMP] = mapped_column(
+        TIMESTAMP, onupdate=datetime.now, nullable=True
     )
     sport_type: Mapped[UserSportTypeEnum] = mapped_column(SQL_ENUM(UserSportTypeEnum), nullable=True)  # type: ignore
     is_active: Mapped[bool] = mapped_column(BOOLEAN, default=True)
     terms_accepted: Mapped[bool] = mapped_column(BOOLEAN, default=False)
     children: Mapped[list["Child"]] = relationship(
-        argument="Child",
-        secondary="user_child",
-        back_populates="parents",
+        argument="Child", secondary="user_child", back_populates="parents"
     )
 
 
@@ -84,7 +83,7 @@ class Child(Base):
     last_name: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
     date_of_birth: Mapped[DATE] = mapped_column(DATE, nullable=False)
     age: Mapped[int] = mapped_column(INT, nullable=False)  # type: ignore
-    gender: Mapped[ChildGenderEnum] = mapped_column(SQL_ENUM(ChildGenderEnum), nullable=False)  # type: ignore
+    gender: Mapped[ChildGenderEnum] = mapped_column(SQL_ENUM(ChildGenderEnum, name="child_gender_enum"), nullable=False)  # type: ignore
     photo_url: Mapped[str] = mapped_column(VARCHAR(256), nullable=True)
     illness_history: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
@@ -93,7 +92,9 @@ class Child(Base):
         VARCHAR(256), nullable=True
     )  # Child's medical diagnoses
     parents: Mapped[list["User"]] = relationship(
-        argument="User", secondary="user_child", back_populates="children"
+        argument="User",
+        secondary="user_child",
+        back_populates="children",
     )
     child_data: Mapped[list["ChildData"]] = relationship(
         argument="ChildData", back_populates="child"
@@ -105,7 +106,10 @@ class Child(Base):
         argument="ChildHealthData", back_populates="child"
     )
     child_development_data: Mapped[list["ChildDevelopmentData"]] = (
-        relationship(argument="ChildDevelopmentData", back_populates="child")
+        relationship(
+            argument="ChildDevelopmentData",
+            back_populates="child",
+        )
     )
     child_physical_data: Mapped[list["ChildPhysicalData"]] = relationship(
         argument="ChildPhysicalData", back_populates="child"
@@ -135,9 +139,10 @@ class ChildData(Base):
     pulse_recovery_status: Mapped[str] = mapped_column(
         VARCHAR(128), nullable=True
     )  # Pulse recovery status
-    adolescence_info: Mapped[str] = mapped_column(
-        VARCHAR(256), nullable=True
-    )  # Information about adolescence
+    # Information about adolescence
+    start_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
+    peek_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
+    end_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
     entry_type: Mapped[str] = mapped_column(
         VARCHAR(128), nullable=False
     )  # Record type (e.g., medical, psychological, etc.)
@@ -176,7 +181,9 @@ class ChildMedicalData(Base):
     urine_tests: Mapped[int] = mapped_column(
         INT, nullable=True
     )  # Results of urine tests
-    # other_tests = mapped_column(JSON, nullable=True)  # Results of other medical tests (e.g., X-rays, MRIs)
+    genetic_test_results: Mapped[str] = mapped_column(
+        VARCHAR(512), nullable=True
+    )  # Results of genetic test, stored as a string or a link to a more detailed report
     blood_type: Mapped[ChildBloodTypeEnum] = mapped_column(SQL_ENUM(ChildBloodTypeEnum), nullable=True)  # type: ignore
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
@@ -208,7 +215,10 @@ class ChildHealthData(Base):
     stress_anxiety_depression: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Frequency and causes of stress, anxiety, or depression
-    emotional_state: Mapped[ChildEmotionalStateEnum] = mapped_column(SQL_ENUM(ChildEmotionalStateEnum), nullable=True)  # type: ignore
+    emotional_state: Mapped[ChildEmotionalStateEnum] = mapped_column(
+        SQL_ENUM(ChildEmotionalStateEnum, name="child_emotional_state_enum"),
+        nullable=True,
+    )  # type: ignore
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
         ForeignKey(column="child.id", ondelete="CASCADE"),
@@ -228,25 +238,32 @@ class ChildDevelopmentData(Base):
         DATE, nullable=False, default=datetime.now
     )  # Record date
     peer_interactions: Mapped[ChildDevelopmentEnum] = mapped_column(
-        SQL_ENUM(ChildDevelopmentEnum), nullable=True
+        SQL_ENUM(ChildDevelopmentEnum, name="child_development_enum"),
+        nullable=True,
     )  # Interaction with peers
     communication_skills: Mapped[ChildCommunicationEnum] = mapped_column(
-        SQL_ENUM(ChildCommunicationEnum), nullable=True
+        SQL_ENUM(ChildCommunicationEnum, name="child_communication_enum"),
+        nullable=True,
     )  # Communication and collaboration skills
     attention_level: Mapped[ChildDevelopmentEnum] = mapped_column(
-        SQL_ENUM(ChildDevelopmentEnum), nullable=True
+        SQL_ENUM(ChildDevelopmentEnum, name="child_development_enum"),
+        nullable=True,
     )  # Attention level
     memory_level: Mapped[ChildDevelopmentEnum] = mapped_column(
-        SQL_ENUM(ChildDevelopmentEnum), nullable=True
+        SQL_ENUM(ChildDevelopmentEnum, name="child_development_enum"),
+        nullable=True,
     )  # Memory level
     problem_solving_skills: Mapped[ChildDevelopmentEnum] = mapped_column(
-        SQL_ENUM(ChildDevelopmentEnum), nullable=True
+        SQL_ENUM(ChildDevelopmentEnum, name="child_development_enum"),
+        nullable=True,
     )  # Problem-solving skills
     cognitive_tests: Mapped[ChildDevelopmentEnum] = mapped_column(
-        SQL_ENUM(ChildDevelopmentEnum), nullable=True
+        SQL_ENUM(ChildDevelopmentEnum, name="child_development_enum"),
+        nullable=True,
     )  # Results of cognitive development tests
     emotional_tests: Mapped[ChildDevelopmentEnum] = mapped_column(
-        SQL_ENUM(ChildDevelopmentEnum), nullable=True
+        SQL_ENUM(ChildDevelopmentEnum, name="child_development_enum"),
+        nullable=True,
     )  # Results of emotional development tests
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
@@ -254,7 +271,8 @@ class ChildDevelopmentData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_development_data"
+        argument="Child",
+        back_populates="child_development_data",
     )
 
 
@@ -281,7 +299,7 @@ class ChildPhysicalData(Base):
     injuries_and_chronic_pains: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Presence of injuries or chronic pains
-    sports_achievements_and_interests: Mapped[str] = mapped_column(
+    sports_achievements: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Sports achievements
     interests: Mapped[str] = mapped_column(
@@ -293,7 +311,8 @@ class ChildPhysicalData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_physical_data"
+        argument="Child",
+        back_populates="child_physical_data",
     )
 
 
@@ -315,12 +334,13 @@ class ChildAcademicData(Base):
         INT, nullable=True
     )  # Time spent on homework
     attitude_towards_study: Mapped[ChildTowardStudyEnum] = mapped_column(
-        SQL_ENUM(ChildTowardStudyEnum), nullable=True
+        SQL_ENUM(ChildTowardStudyEnum, name="child_toward_study_enum"),
+        nullable=True,
     )  # Attitude towards studying and assignments
     areas_of_difficulty: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Specific difficulties in certain areas
-    additional_support_needs: Mapped[str] = mapped_column(
+    additional_support_needs: Mapped[bool] = mapped_column(
         BOOLEAN, default=True, nullable=True
     )  # Needs for additional support
     subject_interest: Mapped[str] = mapped_column(
@@ -332,7 +352,8 @@ class ChildAcademicData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_academic_data"
+        argument="Child",
+        back_populates="child_academic_data",
     )
 
 
@@ -341,7 +362,9 @@ class ChildFamilyData(Base):
     Child family data model
     """
 
-    # Fields for family information and parenting methods
+    date: Mapped[DATE] = mapped_column(
+        DATE, nullable=False, default=datetime.now
+    )  # Record date
     family_info: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Information about family and relatives
@@ -349,7 +372,15 @@ class ChildFamilyData(Base):
         VARCHAR(128), nullable=True
     )  # Family involvement in the child's life
     parenting_methods: Mapped[ChildParentingMethodsEnum] = mapped_column(SQL_ENUM(ChildParentingMethodsEnum), nullable=True)  # type: ignore
-    # behavior_and_discipline = mapped_column(JSON, nullable=True)  # Behavior and discipline practices
+    behavior_and_discipline: Mapped[ChildBehaviorDisciplineEnum] = (
+        mapped_column(
+            SQL_ENUM(
+                ChildBehaviorDisciplineEnum,
+                name="child_behavior_and_discipline_enum",
+            ),
+            nullable=True,
+        )
+    )  # Behavior and discipline practices
     parental_attention_and_care: Mapped[ChildParentalAttentionEnum] = mapped_column(SQL_ENUM(ChildParentalAttentionEnum), nullable=True)  # type: ignore
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
@@ -357,7 +388,8 @@ class ChildFamilyData(Base):
         nullable=False,
     )
     child: Mapped["Child"] = relationship(
-        argument="Child", back_populates="child_family_data"
+        argument="Child",
+        back_populates="child_family_data",
     )
 
 
@@ -366,7 +398,10 @@ class ChildNutritionData(Base):
     Child nutrition data model
     """
 
-    dietary_info: Mapped[int] = mapped_column(
+    date: Mapped[DATE] = mapped_column(
+        DATE, nullable=False, default=datetime.now
+    )  # Record date
+    dietary_info: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Dietary information
     snacking_habits: Mapped[bool] = mapped_column(
@@ -381,7 +416,7 @@ class ChildNutritionData(Base):
     reactions_to_food: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Reactions to specific foods
-    allergies_and_intolerances: Mapped[str] = mapped_column(
+    allergies_or_intolerances: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Information about allergies or intolerances
     child_id: Mapped[int] = mapped_column(
@@ -390,5 +425,6 @@ class ChildNutritionData(Base):
         nullable=False,
     )
     child = relationship(
-        argument="Child", back_populates="child_nutrition_data"
+        argument="Child",
+        back_populates="child_nutrition_data",
     )
