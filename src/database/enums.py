@@ -121,10 +121,11 @@ class ChildParentalAttentionEnum(Enum):
     BAD = "Bad"
 
 
-class ChildPulseRecoveryStatus(Enum):
+class ChildPulseRecoveryStatusEnum(Enum):
     """
     Enum class of Child pulse recovery status
     """
+
     GOOD = "Good"
     AVERAGE = "Average"
     POOR = "Poor"
