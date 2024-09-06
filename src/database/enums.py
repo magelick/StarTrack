@@ -115,3 +115,10 @@ class ChildParentalAttentionEnum(Enum):
     NOT_BAD = "Not bad"
     NOT_GOOD = "Not good"
     BAD = "Bad"
+
+class BehaviorDisciplineEnum(Enum):
+    EXCELLENT = "Excellent"
+    GOOD = "Good"
+    AVERAGE = "Average"
+    NEEDS_IMPROVEMENT = "Needs Improvement"
+    POOR = "Poor"
