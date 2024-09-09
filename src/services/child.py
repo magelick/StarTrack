@@ -17,6 +17,7 @@ class ChildService:
         """
         async with uow:
             children = await uow.children.get_all()
+
             return [
                 ChildDetail.model_validate(child, from_attributes=True)
                 for child in children
@@ -34,6 +35,7 @@ class ChildService:
         async with uow:
             new_child = await uow.children.add_one(child.model_dump())
             await uow.commit()
+
             return ChildDetail.model_validate(new_child, from_attributes=True)
 
     async def get_child(
@@ -46,6 +48,7 @@ class ChildService:
         """
         async with uow:
             child = await uow.children.get_one(**filter_by)
+
             return ChildDetail.model_validate(child, from_attributes=True)
 
     async def update_child(
@@ -62,6 +65,7 @@ class ChildService:
                 child.model_dump(), **filter_by
             )
             await uow.commit()
+
             return ChildDetail.model_validate(
                 update_child, from_attributes=True
             )

@@ -6,6 +6,7 @@ from src.schemas.child_medical_data import (
     ChildMedicalDataAddForm,
     ChildMedicalDataUpdateForm,
 )
+from src.utils import calculate_bsa, get_child, calculate_rohrer_index
 
 
 class ChildMedicalDataService:
@@ -40,10 +41,27 @@ class ChildMedicalDataService:
         :return:
         """
         async with uow:
-            new_child_medical_data = await uow.child_medical_datas.add_one(
-                child.model_dump()
+            child_medical_data_add_data = child.model_dump()
+
+            child_from_data = await get_child(
+                uow_children=uow.children,
+                uow_session=uow._session,  # type: ignore
+                child_id=child_medical_data_add_data.get("child_id"),
             )
+            new_child_medical_data = await uow.child_medical_datas.add_one(
+                child_medical_data_add_data
+            )
+            new_child_medical_data.bsa_index = await calculate_bsa(
+                height_cm=child_from_data.height,
+                weight_kg=child_from_data.weight,
+            )
+            rohrer_index, _ = await calculate_rohrer_index(
+                height_cm=child_from_data.height,
+                weight_kg=child_from_data.weight,
+            )
+            new_child_medical_data.rohrer_index = rohrer_index
             await uow.commit()
+
             return ChildMedicalDataDetail.model_validate(
                 new_child_medical_data, from_attributes=True
             )
@@ -77,12 +95,30 @@ class ChildMedicalDataService:
         :return:
         """
         async with uow:
+            child_medical_data_update_data = child.model_dump()
+
+            child_from_data = await get_child(
+                uow_children=uow.children,
+                uow_session=uow._session,  # type: ignore
+                child_id=child_medical_data_update_data.get("child_id"),
+            )
+
             update_child_medical_data = (
                 await uow.child_medical_datas.update_one(
                     child.model_dump(), **filter_by
                 )
             )
+            update_child_medical_data.bsa_index = await calculate_bsa(
+                height_cm=child_from_data.height,
+                weight_kg=child_from_data.weight,
+            )
+            rohrer_index, _ = await calculate_rohrer_index(
+                height_cm=child_from_data.height,
+                weight_kg=child_from_data.weight,
+            )
+            update_child_medical_data.rohrer_index = rohrer_index
             await uow.commit()
+
             return ChildMedicalDataDetail.model_validate(
                 update_child_medical_data, from_attributes=True
             )

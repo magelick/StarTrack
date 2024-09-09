@@ -4,7 +4,6 @@ from typing import Optional
 from pydantic import Field, PositiveInt
 
 from src.schemas.base import DTO
-from src.schemas.custom_types import AlphaStr
 from src.database.enums import ChildBloodTypeEnum
 
 
@@ -13,33 +12,20 @@ class ChildMedicalDataBasic(DTO):
     Basic Child Medical Data schema
     """
 
-    vaccinations: Optional[AlphaStr] = Field(
+    vaccinations: Optional[str] = Field(
         default=None,
-        max_length=256,
         title="Vaccinations",
         description="Vaccinations current child medical data",
     )
-    medications: Optional[AlphaStr] = Field(
+    medications: Optional[str] = Field(
         default=None,
-        max_length=256,
         title="Medications",
         description="Medications current child medical data",
     )
-    procedures: Optional[AlphaStr] = Field(
+    procedures: Optional[str] = Field(
         default=None,
-        max_length=256,
         title="Procedures",
         description="Procedures current child medical data",
-    )
-    height: AlphaStr = Field(
-        default=...,
-        title="Height",
-        description="Height current child medical data",
-    )
-    weight: AlphaStr = Field(
-        default=...,
-        title="Weight",
-        description="Weight current child medical data",
     )
     blood_tests: Optional[int] = Field(
         default=None,
@@ -86,6 +72,16 @@ class ChildMedicalDataDetail(ChildMedicalDataBasic):
 
     id: PositiveInt = Field(
         default=..., title="ID", description="ID current child medical data"
+    )
+    rohrer_index: Optional[float] = Field(
+        default=None,
+        title="Rohrer Index",
+        description="Rohrer Index current child medical data",
+    )
+    bsa_index: Optional[float] = Field(
+        default=None,
+        title="BSA Index",
+        description="BSA Index current child medical dat",
     )
     date: datetime.date = Field(
         default=...,
