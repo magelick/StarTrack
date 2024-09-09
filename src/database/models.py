@@ -18,6 +18,7 @@ from src.database.enums import (
     UserRoleEnum,
     UserSportTypeEnum,
     ChildGenderEnum,
+    ChildPulseRecoveryStatusEnum,
     ChildBloodTypeEnum,
     ChildEmotionalStateEnum,
     ChildDevelopmentEnum,
@@ -83,6 +84,7 @@ class Child(Base):
     first_name: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
     last_name: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
     date_of_birth: Mapped[DATE] = mapped_column(DATE, nullable=False)
+
     height: Mapped[float] = mapped_column(
         FLOAT, nullable=False
     )  # Child's height (possibly in "height" format)
@@ -351,6 +353,12 @@ class ChildAcademicData(Base):
     additional_support_needs: Mapped[bool] = mapped_column(
         BOOLEAN, default=True, nullable=True
     )  # Needs for additional support
+    subject_gpa: Mapped[float] = mapped_column(
+        FLOAT, nullable=False
+    )  # subject gpa
+    progress_ratio: Mapped[float] = mapped_column(
+        FLOAT, nullable=False
+    )  # progress subject gpa ratio
     subject_interest: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Interest in subjects
