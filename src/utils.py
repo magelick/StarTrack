@@ -1,4 +1,8 @@
 from collections import Counter
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.database.enums import ChildPulseRecoveryStatusEnum, ChildGenderEnum
 
 from typing import Dict, Union
@@ -7,7 +11,23 @@ from datetime import datetime, date, timedelta
 import jwt
 from jwt import PyJWTError
 
+from src.repositories.models import ChildRepository
 from src.settings import pwd_context, SETTINGS
+
+
+async def get_child(
+    uow_children: ChildRepository, uow_session: AsyncSession, child_id: int
+):
+    """
+    Get Child model
+    :param uow_children:
+    :param uow_session:
+    :param child_id:
+    :return:
+    """
+    stmt = select(uow_children.model).filter(uow_children.model.id == child_id)
+    result = await uow_session.execute(stmt)
+    return result.scalar_one()
 
 
 async def create_hash_password(password: str) -> str:
@@ -166,7 +186,7 @@ async def calculate_female_peek_age(
 
 async def all_male_ages(
     current_age: float, peak_age: float, gender: ChildGenderEnum
-) -> Dict[str, float]:
+) -> Dict[str, float] | None:
     """
     Get all ages for males
     :param current_age:
@@ -174,21 +194,22 @@ async def all_male_ages(
     :param gender:
     :return:
     """
-    if gender == ChildGenderEnum.MALE:
-        start_age = peak_age - 1
-        end_age = peak_age + 2
-    else:
-        start_age = peak_age - 1.5
-        end_age = peak_age + 2
+    if peak_age:
+        if gender == ChildGenderEnum.MALE:
+            start_age = peak_age - 1
+            end_age = peak_age + 2
+        else:
+            start_age = peak_age - 1.5
+            end_age = peak_age + 2
 
-    return {
-        "current_age": round(
-            current_age, 2
-        ),  # Для чего нужно выводить возраст в виде float в данной функции?
-        "start_age": round(start_age, 2),
-        "peak_age": round(peak_age, 2),
-        "end_age": round(end_age, 2),
-    }
+        return {
+            "current_age": round(current_age, 2),
+            "start_age": round(start_age, 2),
+            "peak_age": round(peak_age, 2),
+            "end_age": round(end_age, 2),
+        }
+    else:
+        return None
 
 
 async def calculate_adolescence_info(
@@ -221,7 +242,10 @@ async def calculate_adolescence_info(
         all_ages = await all_male_ages(
             current_age=current_age, peak_age=male_peak_age, gender=gender
         )
-        return all_ages
+        if all_ages:
+            return all_ages
+        else:
+            return None
     elif gender == ChildGenderEnum.FEMALE:
         female_peak_age = await calculate_female_peek_age(
             current_age=current_age,
@@ -232,7 +256,10 @@ async def calculate_adolescence_info(
         all_ages = await all_male_ages(
             current_age=current_age, peak_age=female_peak_age, gender=gender
         )
-        return all_ages
+        if all_ages:
+            return all_ages
+        else:
+            return None
     else:
         raise ValueError(f"Invalid gender: {gender}")
 
@@ -458,6 +485,8 @@ async def calculate_progress_ratio(current_avg_grade, previous_avg_grade):
     """
     Вычисляет коэффициент прогресса для оценки изменения успеваемости.
     """
+    if not current_avg_grade or not previous_avg_grade:
+        return None
 
     progress_ratio = (current_avg_grade / previous_avg_grade) - 1
     return progress_ratio

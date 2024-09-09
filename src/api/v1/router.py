@@ -16,13 +16,14 @@ from src.api.v1.child_academic_data import router as child_academic_data_router
 from src.api.v1.child_nutrition_data import (
     router as child_nutrition_data_router,
 )
-from src.dependencies import is_authenticated
+
+# from src.dependencies import is_authenticated
 
 # Initial v1 router
 router = APIRouter(
     prefix="/v1",
     default_response_class=ORJSONResponse,
-    dependencies=[is_authenticated],
+    # dependencies=[is_authenticated],
 )
 # Including all routers
 router.include_router(child_router)
