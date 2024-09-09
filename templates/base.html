@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Star Track</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+</head>
+<body>
+<header>
+  <div class="container">
+    <a href="{{ url_for('home') }}" class="logo">Star Track</a>
+    <nav>
+      <ul class="nav-menu">
+        <li><a href="{{ url_for('about') }}">О нас</a></li>
+        <li><a href="{{ url_for('services') }}">Услуги</a></li>
+        <li><a href="{{ url_for('contact') }}">Контакты</a></li>
+      </ul>
+    </nav>
+    <div class="account">
+      {% if current_user.is_authenticated %}
+      <a href="{{ url_for('dashboard') }}" class="btn-rounded">Личный кабинет</a>
+      <a href="{{ url_for('logout') }}" class="btn-rounded">Выйти</a>
+      {% else %}
+      <a href="{{ url_for('login') }}" class="btn-rounded">Личный кабинет</a>
+      {% endif %}
+    </div>
+    <div class="language-switch">
+      <a href="?lang=ru">RU</a> | <a href="?lang=en">EN</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  {% block hero %}
+  {% if request.endpoint == 'home' %}
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Добро пожаловать в Star Track!)</h1>
+      <p>Ваш надежный партнер в развитии и обучении детей.</p>
+      <a href="{{ url_for('start') }}" class="btn-cta">Начать</a>
+    </div>
+  </section>
+  {% endif %}
+  {% endblock %}
+
+  <div class="container">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% block hera %}
+    {% if request.endpoint == 'home' %}
+    <section class="hera">
+      <h1>Откройте Волшебный Мир Развития Вашего Ребенка</h1>
+      <p>Персонализированные рекомендации, интеллектуальные решения и эффективная интеграция для раскрытия полного потенциала вашего ребенка.</p>
+    </section>
+    {% endif %}
+    {% endblock %}
+
+    {% block services %}
+    {% if request.endpoint == 'home' %}
+    <section class="services">
+      <div class="service">
+        <h2>Персонализированные Рекомендации</h2>
+        <p>Погружайтесь в мир, где каждое движение вашего ребенка становится шагом к совершенству. Наша платформа с точностью до месяца определяет начало, пик и окончание подросткового возраста, предоставляя вам персонализированные рекомендации по физическому и психологическому развитию, здоровью, воспитанию и питанию. Каждый совет основан на современных данных и адаптирован под уникальные потребности вашего ребенка.</p>
+      </div>
+      <div class="service">
+        <h2>Интеллектуальные Решения</h2>
+        <p>Доверьтесь передовым технологиям искусственного интеллекта, которые создают рекомендации на основе самых актуальных данных детской медицины. Это не просто цифры — это волшебный ключ к раскрытию полного потенциала вашего ребенка.</p>
+      </div>
+      <div class="service">
+        <h2>Эффективная Интеграция</h2>
+        <p>Представьте себе платформу, которая не только анализирует, но и сотрудничает. Интеграция профиля вашего ребенка с тренером и учителем открывает новые горизонты для эффективных занятий и достижения наивысших результатов.</p>
+      </div>
+      <div class="service">
+        <h2>Постоянное Совершенствование</h2>
+        <p>Мы постоянно обновляем наш функционал, чтобы вы могли воспользоваться всеми последними достижениями в области детской медицины и технологий. Наша цель — быть на передовой и обеспечить вашему ребенку лучшие условия для роста.</p>
+      </div>
+      <div class="service">
+        <h2>Вера в Уникальность</h2>
+        <p>Мы верим в магию каждого ребенка. Наша платформа — это ваш надежный партнер в пути к раскрытию гениальности вашего ребенка. Мы помогаем избежать травм, как психологических, так и физических, и направляем вас на пути к безопасному и эффективному развитию.</p>
+      </div>
+    </section>
+    {% endif %}
+    {% endblock %}
+
+    {% block call_to_action %}
+    {% if request.endpoint == 'home' %}
+    <section class="call-to-action">
+      <p>Сделайте шаг в мир возможностей и волшебства. Позвольте вашему ребенку раскрыть все свои таланты и способности вместе с нами.</p>
+      <a href="#signup" class="cta-button">Начать сейчас</a>
+    </section>
+    {% endif %}
+    {% endblock %}
+
+    {% block about_us %}
+    {% if request.endpoint == 'home' %}
+    <section class="about-us">
+      <div class="about-content">
+        <h2>О нас</h2>
+        <p class="intro">Мы — команда экспертов, стремящихся сделать здоровье и развитие детей лучше с помощью передовых технологий и научного подхода.</p>
+        <div class="about-sections">
+          <div class="about-section step-1">
+            <h3>Кто мы</h3>
+            <p>Мы — это группа специалистов в области медицины, психологии и технологий. В нашей команде есть кандидаты и доктора наук, которые постоянно работают над улучшением нашей платформы и методик.</p>
+          </div>
+          <div class="about-section step-2">
+            <h3>Наша миссия</h3>
+            <p>Мы стремимся предоставить родителям и детям лучшие инструменты для мониторинга и улучшения здоровья и развития. Наша цель — создать безопасное и поддерживающее окружение для роста и развития каждого ребенка.</p>
+          </div>
+          <div class="about-section step-3">
+            <h3>Наш подход</h3>
+            <ul>
+              <li><strong>Индивидуальный подход:</strong> Наша платформа адаптируется к уникальным потребностям каждого ребенка, предлагая персонализированные рекомендации.</li>
+              <li><strong>Инновационные технологии:</strong> Мы используем современные технологии и ИИ для предоставления актуальных рекомендаций. Наш ИИ постоянно обновляет данные на основе мировых исследований.</li>
+              <li><strong>Обоснованные решения:</strong> Все рекомендации основаны на научных исследованиях и проверенных методах, что гарантирует их надежность и эффективность.</li>
+            </ul>
+          </div>
+          <div class="about-section step-4">
+            <h3>Почему мы</h3>
+            <p>Мы обеспечиваем высокое качество и надежность. Наши решения опираются на глубокие исследования и многолетний опыт, чтобы каждая рекомендация была полезной и обоснованной.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endif %}
+    {% endblock %}
+
+    {% block content %}
+    <section class="features">
+      <div class="container">
+        <h2>Преимущества нашей платформы</h2>
+        <div class="features-grid">
+          <div class="feature-item">
+            <img src="{{ url_for('static', filename='icons/feature1.jpg') }}" alt="Иконка Преимущества 1">
+            <h3>Индивидуальные рекомендации</h3>
+            <p>Платформа предоставляет персонализированные рекомендации, учитывая уникальные особенности каждого ребенка.</p>
+          </div>
+          <div class="feature-item">
+            <img src="{{ url_for('static', filename='icons/feature2.jpg') }}" alt="Иконка Преимущества 2">
+            <h3>Прогнозирование и анализ</h3>
+            <p>Используйте мощные инструменты анализа для прогнозирования и отслеживания прогресса вашего ребенка.</p>
+          </div>
+          <div class="feature-item">
+            <img src="{{ url_for('static', filename='icons/feature3.jpg') }}" alt="Иконка Преимущества 3">
+            <h3>Удобный интерфейс</h3>
+            <p>Интуитивно понятный и удобный интерфейс для простого и быстрого взаимодействия.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="target-audience">
+      <div class="container">
+        <h2>Для кого эта платформа?</h2>
+        <p>Наша платформа разработана для тех, кто заботится о будущем детей.</p>
+        <div class="audience-cards">
+          <div class="card">
+            <img src="{{ url_for('static', filename='icons/parent.jpg') }}" alt="Иконка для родителей">
+            <h3>Родители</h3>
+            <p>Получайте рекомендации по развитию и здоровью вашего ребенка.</p>
+          </div>
+          <div class="card">
+            <img src="{{ url_for('static', filename='icons/coach.jpg') }}" alt="Иконка для тренеров">
+            <h3>Тренеры</h3>
+            <p>Следите за прогрессом своих подопечных и поддерживайте их развитие.</p>
+          </div>
+          <div class="card">
+            <img src="{{ url_for('static', filename='icons/teachers.jpg') }}" alt="Иконка для учителей">
+            <h3>Учителя</h3>
+            <p>Поддерживайте учеников в их учебе и личностном росте.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="interactive-block">
+      <div class="container">
+        <h2>Интерактивный блок</h2>
+        <p>Используйте наши калькуляторы и формы для расчета параметров роста и развития вашего ребенка:</p>
+        <form action="{{ url_for('calculate_growth') }}" method="POST">
+          <label for="height">Рост (см):</label>
+          <input type="number" id="height" name="height" required>
+
+          <label for="weight">Вес (кг):</label>
+          <input type="number" id="weight" name="weight" required>
+
+          <button type="submit">Рассчитать</button>
+        </form>
+      </div>
+    </section>
+    <section class="research">
+      <div class="container">
+        <h2>Научные подтверждения</h2>
+        <ul class="research-list">
+          <li>Наша команда состоит из кандидатов и докторов наук, которые проводят регулярные исследования.</li>
+          <li>Мы используем данные исследований мирового уровня, подтвержденные ведущими учеными из разных стран.</li>
+          <li>Искусственный интеллект на нашей платформе постоянно обновляет данные мировых исследований.</li>
+          <li>Это обеспечивает актуальность и точность всех рекомендаций и советов, основываясь на самых свежих научных данных.</li>
+        </ul>
+      </div>
+    </section>
+    <section class="testimonials">
+      <div class="container">
+        <h2>Отзывы наших пользователей</h2>
+        <div class="testimonial-item">
+          <blockquote>
+            <p>"Star Track изменил наше представление о воспитании детей. Мы больше не боимся упустить важные моменты развития."</p>
+            <cite>— Анна</cite>
+          </blockquote>
+        </div>
+        <div class="testimonial-item">
+          <blockquote>
+            <p>"Платформа предлагает очень полезные рекомендации и помогает оставаться в курсе всех аспектов развития нашего ребенка."</p>
+            <cite>— Михаил</cite>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+    <section class="pricing">
+      <h2>Наши тарифы</h2>
+      <div class="pricing-container">
+        <div class="pricing-item">
+          <h3>Бесплатный</h3>
+          <p class="price">0 $</p>
+          <ul>
+            <li>- Создание профиля ребенка</li>
+            <li>- Контроль развития ребенка с предоставлением графиков</li>
+            <li>- Ограниченный доступ к истории данных</li>
+            <li>- Ограниченный доступ к рекомендациям</li>
+          </ul>
+          <div class="button-container">
+            <a href="#" class="cta-button">Начать бесплатно</a>
+          </div>
+        </div>
+        <div class="pricing-item premium">
+          <h3>Премиум</h3>
+          <p class="price">9,99 $ / год</p>
+          <ul>
+            <li>- Выявление этапа развития</li>
+            <li>- Выявление этапов подросткового возраста</li>
+            <li>- Рекомендации по психологическому развитию</li>
+            <li>- Рекомендации по физическому развитию</li>
+            <li>- Рекомендации по здоровью</li>
+            <li>- Рекомендации по питанию</li>
+            <li>- Рекомендации по воспитанию</li>
+          </ul>
+          <div class="button-container">
+            <a href="#" class="cta-button">Перейти на Премиум</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Блок с часто задаваемыми вопросами (FAQ) -->
+    <section class="faq">
+      <div class="container">
+        <h2>Часто задаваемые вопросы пользователей</h2>
+        <div class="faq-item">
+          <div class="faq-item-header">Как начать использовать платформу?</div>
+          <div class="faq-item-content">
+            <p>Зарегистрируйтесь на сайте, создайте профиль вашего ребенка, и начните получать персонализированные рекомендации.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-item-header">Можно ли использовать платформу бесплатно?</div>
+          <div class="faq-item-content">
+            <p>Да, вы можете воспользоваться базовыми функциями платформы бесплатно. Расширенные функции доступны по подписке.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-item-header">Как рассчитываются рекомендации?</div>
+          <div class="faq-item-content">
+            <p>Рекомендации рассчитываются на основе данных о здоровье и развитии вашего ребенка, а также с использованием искусственного интеллекта.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% endblock %}
+  </div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</main>
+<footer>
+  <div class="footer-content">
+    <div class="footer-social">
+      <a href="https://instagram.com/yourprofile" target="_blank" class="social-icon">
+        <img src="{{ url_for('static', filename='icons/Instagram.jpg') }}" alt="Instagram">
+      </a>
+      <a href="https://t.me/yourprofile" target="_blank" class="social-icon">
+        <img src="{{ url_for('static', filename='icons/Telegram.jpg') }}" alt="Telegram">
+      </a>
+    </div>
+    <div class="footer-contacts">
+      <div class="contact-item">
+        <img src="{{ url_for('static', filename='icons/Email.jpg') }}" alt="Email">
+        <a href="mailto:contact@startrack.com">contact@startrack.com</a>
+      </div>
+    </div>
+  </div>
+  <p>&copy; 2024 Star Track. Все права защищены.</p>
+</footer>
+<script>
+  $(document).ready(function() {
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        toastr.{{ category }}("{{ message }}");
+      {% endfor %}
+    {% endif %}
+    {% endwith %}
+  });
+</script>
+</body>
+</html>
