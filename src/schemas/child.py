@@ -1,5 +1,5 @@
 import datetime
-from typing import Union, Optional
+from typing import Optional
 
 from pydantic import Field, PositiveInt
 
@@ -30,29 +30,32 @@ class ChildBasic(DTO):
         title="Birthday",
         description="Birthday current child",
     )
+    height: float = Field(
+        default=..., title="Height", description="Height current child"
+    )
+    weight: float = Field(
+        default=..., title="Weight", description="Weight current child"
+    )
     gender: ChildGenderEnum = Field(
         default=..., title="Gender", description="Gender current child"
     )
     photo_url: Optional[str] = Field(
         default=None,
-        max_length=256,
+        max_length=512,
         title="Photo",
         description="Photo current child",
     )
-    illness_history: Optional[AlphaStr] = Field(
+    illness_history: Optional[str] = Field(
         default=None,
-        max_length=256,
+        max_length=512,
         title="Illness History",
         description="Illness History current child",
     )
-    medical_diagnoses: Optional[AlphaStr] = Field(
+    medical_diagnoses: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Medical Diagnoses",
         description="Medical Diagnoses current child",
-    )
-    age: Union[float, PositiveInt] = Field(
-        default=1, title="Age", description="Age current child"
     )
 
 
