@@ -5,10 +5,9 @@ from pydantic import Field, PositiveInt
 
 from src.database.enums import ChildTowardStudyEnum
 from src.schemas.base import DTO
-from src.schemas.custom_types import AlphaStr
 
 
-class ChildAcademicDataBasix(DTO):
+class ChildAcademicDataBasic(DTO):
     """
     Basic Child Academic Data schema
     """
@@ -18,7 +17,7 @@ class ChildAcademicDataBasix(DTO):
         title="Academic Performance",
         description="Academic Performance current child academic data",
     )
-    academic_achievements: Optional[float] = Field(
+    academic_achievements: Optional[str] = Field(
         default=None,
         title="Academic Achievements",
         description="Academic Achievements current child academic data",
@@ -33,7 +32,7 @@ class ChildAcademicDataBasix(DTO):
         title="Attitude Towards Study",
         description="Attitude Towards Study current child academic data",
     )
-    areas_of_difficulty: Optional[AlphaStr] = Field(
+    areas_of_difficulty: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Areas of Difficulty",
@@ -44,7 +43,7 @@ class ChildAcademicDataBasix(DTO):
         title="Additional Support Needs",
         description="Additional Support Needs current child academic data",
     )
-    subject_interest: Optional[AlphaStr] = Field(
+    subject_interest: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Subject Interest",
@@ -57,7 +56,29 @@ class ChildAcademicDataBasix(DTO):
     )
 
 
-class ChildAcademicDataAddForm(ChildAcademicDataBasix):
+class ChildAcademicDataForm(ChildAcademicDataBasic):
+    """
+    Basic Child Academic Data form schema
+    """
+
+    grades: Optional[list[int]] = Field(
+        default=None,
+        title="Grades",
+        description="Grades current child academic data",
+    )
+    current_avg_grade: Optional[int] = Field(
+        default=None,
+        title="Current AVG grade",
+        description="Current AVG grade current child academic data",
+    )
+    previous_avg_grade: Optional[int] = Field(
+        default=None,
+        title="Previous AVG grade",
+        description="Previous AVG grade current child academic data",
+    )
+
+
+class ChildAcademicDataAddForm(ChildAcademicDataForm):
     """
     Child Academic Data add schema
     """
@@ -65,7 +86,7 @@ class ChildAcademicDataAddForm(ChildAcademicDataBasix):
     ...
 
 
-class ChildAcademicDataUpdateForm(ChildAcademicDataBasix):
+class ChildAcademicDataUpdateForm(ChildAcademicDataForm):
     """
     Child Academic Data update schema
     """
@@ -73,13 +94,23 @@ class ChildAcademicDataUpdateForm(ChildAcademicDataBasix):
     ...
 
 
-class ChildAcademicDataDetail(ChildAcademicDataBasix):
+class ChildAcademicDataDetail(ChildAcademicDataBasic):
     """
     Child Academic Data detail schema
     """
 
     id: PositiveInt = Field(
         default=..., title="ID", description="ID current child academic data"
+    )
+    subject_gpa: Optional[float] = Field(
+        default=None,
+        title="Subject GPA",
+        description="Subject GPA current child academic data",
+    )
+    progress_ratio: Optional[float] = Field(
+        default=None,
+        title="Progress Ratio",
+        description="Progress Ratio current academic data",
     )
     date: datetime.date = Field(
         default=...,

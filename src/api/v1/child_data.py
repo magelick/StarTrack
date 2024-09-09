@@ -56,7 +56,7 @@ async def add_new_child_data(
     :return:
     """
     new_child_data = await ChildDataService().add_child_data(
-        uow=uow, child=add_form
+        uow=uow, child_add_form=add_form
     )
     return new_child_data
 
@@ -109,7 +109,7 @@ async def update_child_data_by_id(
     """
     try:
         update_child_data = await ChildDataService().update_child_data(
-            uow=uow, child=update_form, id=child_data_id
+            uow=uow, child_update_form=update_form, id=child_data_id
         )
         return update_child_data
     except NoResultFound:

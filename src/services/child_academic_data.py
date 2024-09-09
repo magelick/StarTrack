@@ -6,6 +6,7 @@ from src.schemas.child_academic_data import (
     ChildAcademicDataAddForm,
     ChildAcademicDataUpdateForm,
 )
+from src.utils import calculate_subject_gpa, calculate_progress_ratio
 
 
 class ChildAcademicDataService:
@@ -40,10 +41,49 @@ class ChildAcademicDataService:
         :return:
         """
         async with uow:
+            child_academic_add_data = child.model_dump()
+
+            child_academic_info = {
+                "academic_performance": child_academic_add_data.get(
+                    "academic_performance"
+                ),
+                "academic_achievements": child_academic_add_data.get(
+                    "academic_achievements"
+                ),
+                "work_time": child_academic_add_data.get("work_time"),
+                "attitude_towards_study": child_academic_add_data.get(
+                    "attitude_towards_study"
+                ),
+                "areas_of_difficulty": child_academic_add_data.get(
+                    "areas_of_difficulty"
+                ),
+                "additional_support_needs": child_academic_add_data.get(
+                    "additional_support_needs"
+                ),
+                "subject_interest": child_academic_add_data.get(
+                    "subject_interest"
+                ),
+                "child_id": child_academic_add_data.get("child_id"),
+            }
+
             new_child_academic_data = await uow.child_academic_datas.add_one(
-                child.model_dump()
+                child_academic_info
+            )
+            new_child_academic_data.subject_gpa = await calculate_subject_gpa(
+                grades=child_academic_add_data.get("grades")
+            )
+            new_child_academic_data.progress_ratio = (
+                await calculate_progress_ratio(
+                    current_avg_grade=child_academic_add_data.get(
+                        "current_avg_grade"
+                    ),
+                    previous_avg_grade=child_academic_add_data.get(
+                        "previous_avg_grade"
+                    ),
+                )
             )
             await uow.commit()
+
             return ChildAcademicDataDetail.model_validate(
                 new_child_academic_data, from_attributes=True
             )
@@ -77,9 +117,49 @@ class ChildAcademicDataService:
         :return:
         """
         async with uow:
+            child_academic_update_data = child.model_dump()
+
+            child_academic_info = {
+                "academic_performance": child_academic_update_data.get(
+                    "academic_performance"
+                ),
+                "academic_achievements": child_academic_update_data.get(
+                    "academic_achievements"
+                ),
+                "work_time": child_academic_update_data.get("work_time"),
+                "attitude_towards_study": child_academic_update_data.get(
+                    "attitude_towards_study"
+                ),
+                "areas_of_difficulty": child_academic_update_data.get(
+                    "areas_of_difficulty"
+                ),
+                "additional_support_needs": child_academic_update_data.get(
+                    "additional_support_needs"
+                ),
+                "subject_interest": child_academic_update_data.get(
+                    "subject_interest"
+                ),
+                "child_id": child_academic_update_data.get("child_id"),
+            }
+
             update_child_academic_data = (
                 await uow.child_academic_datas.update_one(
-                    child.model_dump(), **filter_by
+                    child_academic_info, **filter_by
+                )
+            )
+            update_child_academic_data.subject_gpa = (
+                await calculate_subject_gpa(
+                    grades=child_academic_update_data.get("grades")
+                )
+            )
+            update_child_academic_data.progress_ratio = (
+                await calculate_progress_ratio(
+                    current_avg_grade=child_academic_update_data.get(
+                        "current_avg_grade"
+                    ),
+                    previous_avg_grade=child_academic_update_data.get(
+                        "previous_avg_grade"
+                    ),
                 )
             )
             await uow.commit()

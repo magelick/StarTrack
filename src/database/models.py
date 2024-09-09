@@ -26,6 +26,7 @@ from src.database.enums import (
     ChildParentingMethodsEnum,
     ChildParentalAttentionEnum,
     ChildBehaviorDisciplineEnum,
+    ChildPulseRecoveryStatusEnum,
 )
 
 
@@ -82,14 +83,19 @@ class Child(Base):
     first_name: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
     last_name: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
     date_of_birth: Mapped[DATE] = mapped_column(DATE, nullable=False)
-    age: Mapped[int] = mapped_column(INT, nullable=False)  # type: ignore
+    height: Mapped[float] = mapped_column(
+        FLOAT, nullable=False
+    )  # Child's height (possibly in "height" format)
+    weight: Mapped[float] = mapped_column(
+        FLOAT, nullable=False
+    )  # Child's weight (possibly in "weight" format)
     gender: Mapped[ChildGenderEnum] = mapped_column(SQL_ENUM(ChildGenderEnum, name="child_gender_enum"), nullable=False)  # type: ignore
     photo_url: Mapped[str] = mapped_column(VARCHAR(256), nullable=True)
     illness_history: Mapped[str] = mapped_column(
-        VARCHAR(256), nullable=True
+        VARCHAR(512), nullable=True
     )  # Child's illness history
     medical_diagnoses: Mapped[str] = mapped_column(
-        VARCHAR(256), nullable=True
+        VARCHAR(512), nullable=True
     )  # Child's medical diagnoses
     parents: Mapped[list["User"]] = relationship(
         argument="User",
@@ -136,16 +142,20 @@ class ChildData(Base):
     feedback: Mapped[str] = mapped_column(
         TEXT, nullable=True
     )  # Feedback from parents or guardians
-    pulse_recovery_status: Mapped[str] = mapped_column(
-        VARCHAR(128), nullable=True
+    pulse_recovery_status: Mapped[ChildPulseRecoveryStatusEnum] = (
+        mapped_column(
+            SQL_ENUM(
+                ChildPulseRecoveryStatusEnum,
+                name="child_pulse_recovery_status_enum",
+            ),
+            nullable=True,
+        )
     )  # Pulse recovery status
     # Information about adolescence
-    start_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
-    peek_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
-    end_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=False)
-    entry_type: Mapped[str] = mapped_column(
-        VARCHAR(128), nullable=False
-    )  # Record type (e.g., medical, psychological, etc.)
+    current_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=True)  # type: ignore
+    start_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=True)
+    peek_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=True)
+    end_adolescence_age: Mapped[float] = mapped_column(FLOAT, nullable=True)
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
         ForeignKey(column="child.id", ondelete="CASCADE"),
@@ -169,12 +179,6 @@ class ChildMedicalData(Base):
     )  # Child's vaccinations, including dates and types
     medications: Mapped[str] = mapped_column(VARCHAR(256), nullable=True)
     procedures: Mapped[str] = mapped_column(VARCHAR(256), nullable=True)
-    height: Mapped[float] = mapped_column(
-        FLOAT, nullable=False
-    )  # Child's height (possibly in "height" format)
-    weight: Mapped[float] = mapped_column(
-        FLOAT, nullable=False
-    )  # Child's weight (possibly in "weight" format)
     blood_tests: Mapped[int] = mapped_column(
         INT, nullable=True
     )  # Results of blood tests
@@ -184,6 +188,10 @@ class ChildMedicalData(Base):
     genetic_test_results: Mapped[str] = mapped_column(
         VARCHAR(512), nullable=True
     )  # Results of genetic test, stored as a string or a link to a more detailed report
+    rohrer_index: Mapped[float] = mapped_column(
+        FLOAT, nullable=True
+    )  # Rohrer index
+    bsa_index: Mapped[float] = mapped_column(FLOAT, nullable=True)  # BSA index
     blood_type: Mapped[ChildBloodTypeEnum] = mapped_column(SQL_ENUM(ChildBloodTypeEnum), nullable=True)  # type: ignore
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
@@ -346,6 +354,12 @@ class ChildAcademicData(Base):
     subject_interest: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Interest in subjects
+    subject_gpa: Mapped[float] = mapped_column(
+        FLOAT, nullable=True
+    )  # Subject GPA
+    progress_ratio: Mapped[float] = mapped_column(
+        FLOAT, nullable=True
+    )  # Progress
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
         ForeignKey(column="child.id", ondelete="CASCADE"),

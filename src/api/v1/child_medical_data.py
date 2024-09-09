@@ -98,7 +98,7 @@ async def get_child_medical_data_by_id(
 
 
 @router.put(
-    path="/{child_data_id}/",
+    path="/{child_medical_data_id}/",
     status_code=status.HTTP_200_OK,
     response_model=ChildMedicalDataDetail,
     name="Update child medical data by ID",
