@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Star Track</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', path='/styles.css') }}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
@@ -12,21 +12,18 @@
 <body>
 <header>
   <div class="container">
-    <a href="{{ url_for('home') }}" class="logo">Star Track</a>
+    <a href="#" class="logo">Star Track</a>
     <nav>
       <ul class="nav-menu">
-        <li><a href="{{ url_for('about') }}">О нас</a></li>
-        <li><a href="{{ url_for('services') }}">Услуги</a></li>
-        <li><a href="{{ url_for('contact') }}">Контакты</a></li>
+        <li><a href="#">О нас</a></li>
+        <li><a href="#">Услуги</a></li>
+        <li><a href="#">Контакты</a></li>
       </ul>
     </nav>
     <div class="account">
-      {% if current_user.is_authenticated %}
-      <a href="{{ url_for('dashboard') }}" class="btn-rounded">Личный кабинет</a>
-      <a href="{{ url_for('logout') }}" class="btn-rounded">Выйти</a>
-      {% else %}
-      <a href="{{ url_for('login') }}" class="btn-rounded">Личный кабинет</a>
-      {% endif %}
+      <a href="#" class="btn-rounded">Личный кабинет</a>
+      <a href="#" class="btn-rounded">Выйти</a>
+      <a href="#" class="btn-rounded">Личный кабинет</a>
     </div>
     <div class="language-switch">
       <a href="?lang=ru">RU</a> | <a href="?lang=en">EN</a>
@@ -35,40 +32,22 @@
 </header>
 
 <main>
-  {% block hero %}
-  {% if request.endpoint == 'home' %}
   <section class="hero">
     <div class="hero-content">
       <h1>Добро пожаловать в Star Track!)</h1>
       <p>Ваш надежный партнер в развитии и обучении детей.</p>
-      <a href="{{ url_for('start') }}" class="btn-cta">Начать</a>
+      <a href="#" class="btn-cta">Начать</a>
     </div>
   </section>
-  {% endif %}
-  {% endblock %}
 
   <div class="container">
-    {% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
     <div class="flash-messages">
-      {% for category, message in messages %}
       <div class="flash {{ category }}">{{ message }}</div>
-      {% endfor %}
     </div>
-    {% endif %}
-    {% endwith %}
-
-    {% block hera %}
-    {% if request.endpoint == 'home' %}
     <section class="hera">
       <h1>Откройте Волшебный Мир Развития Вашего Ребенка</h1>
       <p>Персонализированные рекомендации, интеллектуальные решения и эффективная интеграция для раскрытия полного потенциала вашего ребенка.</p>
     </section>
-    {% endif %}
-    {% endblock %}
-
-    {% block services %}
-    {% if request.endpoint == 'home' %}
     <section class="services">
       <div class="service">
         <h2>Персонализированные Рекомендации</h2>
@@ -91,20 +70,10 @@
         <p>Мы верим в магию каждого ребенка. Наша платформа — это ваш надежный партнер в пути к раскрытию гениальности вашего ребенка. Мы помогаем избежать травм, как психологических, так и физических, и направляем вас на пути к безопасному и эффективному развитию.</p>
       </div>
     </section>
-    {% endif %}
-    {% endblock %}
-
-    {% block call_to_action %}
-    {% if request.endpoint == 'home' %}
     <section class="call-to-action">
       <p>Сделайте шаг в мир возможностей и волшебства. Позвольте вашему ребенку раскрыть все свои таланты и способности вместе с нами.</p>
-      <a href="#signup" class="cta-button">Начать сейчас</a>
+      <a href="#" class="cta-button">Начать сейчас</a>
     </section>
-    {% endif %}
-    {% endblock %}
-
-    {% block about_us %}
-    {% if request.endpoint == 'home' %}
     <section class="about-us">
       <div class="about-content">
         <h2>О нас</h2>
@@ -133,26 +102,22 @@
         </div>
       </div>
     </section>
-    {% endif %}
-    {% endblock %}
-
-    {% block content %}
     <section class="features">
       <div class="container">
         <h2>Преимущества нашей платформы</h2>
         <div class="features-grid">
           <div class="feature-item">
-            <img src="{{ url_for('static', filename='icons/feature1.jpg') }}" alt="Иконка Преимущества 1">
+            <img src="{{ url_for('static', path='/icons/feature1.jpg') }}" alt="Иконка Преимущества 1">
             <h3>Индивидуальные рекомендации</h3>
             <p>Платформа предоставляет персонализированные рекомендации, учитывая уникальные особенности каждого ребенка.</p>
           </div>
           <div class="feature-item">
-            <img src="{{ url_for('static', filename='icons/feature2.jpg') }}" alt="Иконка Преимущества 2">
+            <img src="{{ url_for('static', path='/icons/feature2.jpg') }}" alt="Иконка Преимущества 2">
             <h3>Прогнозирование и анализ</h3>
             <p>Используйте мощные инструменты анализа для прогнозирования и отслеживания прогресса вашего ребенка.</p>
           </div>
           <div class="feature-item">
-            <img src="{{ url_for('static', filename='icons/feature3.jpg') }}" alt="Иконка Преимущества 3">
+            <img src="{{ url_for('static', path='/icons/feature3.jpg') }}" alt="Иконка Преимущества 3">
             <h3>Удобный интерфейс</h3>
             <p>Интуитивно понятный и удобный интерфейс для простого и быстрого взаимодействия.</p>
           </div>
@@ -165,17 +130,17 @@
         <p>Наша платформа разработана для тех, кто заботится о будущем детей.</p>
         <div class="audience-cards">
           <div class="card">
-            <img src="{{ url_for('static', filename='icons/parent.jpg') }}" alt="Иконка для родителей">
+            <img src="{{ url_for('static', path='/icons/parent.jpg') }}" alt="Иконка для родителей">
             <h3>Родители</h3>
             <p>Получайте рекомендации по развитию и здоровью вашего ребенка.</p>
           </div>
           <div class="card">
-            <img src="{{ url_for('static', filename='icons/coach.jpg') }}" alt="Иконка для тренеров">
+            <img src="{{ url_for('static', path='/icons/coach.jpg') }}" alt="Иконка для тренеров">
             <h3>Тренеры</h3>
             <p>Следите за прогрессом своих подопечных и поддерживайте их развитие.</p>
           </div>
           <div class="card">
-            <img src="{{ url_for('static', filename='icons/teachers.jpg') }}" alt="Иконка для учителей">
+            <img src="{{ url_for('static', path='/icons/teachers.jpg') }}" alt="Иконка для учителей">
             <h3>Учителя</h3>
             <p>Поддерживайте учеников в их учебе и личностном росте.</p>
           </div>
@@ -186,7 +151,7 @@
       <div class="container">
         <h2>Интерактивный блок</h2>
         <p>Используйте наши калькуляторы и формы для расчета параметров роста и развития вашего ребенка:</p>
-        <form action="{{ url_for('calculate_growth') }}" method="POST">
+        <form action="#" method="POST">
           <label for="height">Рост (см):</label>
           <input type="number" id="height" name="height" required>
 
@@ -283,39 +248,27 @@
         </div>
       </div>
     </section>
-    {% endblock %}
   </div>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', path='script.js') }}"></script>
 </main>
 <footer>
   <div class="footer-content">
     <div class="footer-social">
       <a href="https://instagram.com/yourprofile" target="_blank" class="social-icon">
-        <img src="{{ url_for('static', filename='icons/Instagram.jpg') }}" alt="Instagram">
+        <img src="{{ url_for('static', path='/icons/Instagram.jpg') }}" alt="Instagram">
       </a>
       <a href="https://t.me/yourprofile" target="_blank" class="social-icon">
-        <img src="{{ url_for('static', filename='icons/Telegram.jpg') }}" alt="Telegram">
+        <img src="{{ url_for('static', path='/icons/Telegram.jpg') }}" alt="Telegram">
       </a>
     </div>
     <div class="footer-contacts">
       <div class="contact-item">
-        <img src="{{ url_for('static', filename='icons/Email.jpg') }}" alt="Email">
+        <img src="{{ url_for('static', path='/icons/Email.jpg') }}" alt="Email">
         <a href="mailto:contact@startrack.com">contact@startrack.com</a>
       </div>
     </div>
   </div>
   <p>&copy; 2024 Star Track. Все права защищены.</p>
 </footer>
-<script>
-  $(document).ready(function() {
-    {% with messages = get_flashed_messages(with_categories=True) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        toastr.{{ category }}("{{ message }}");
-      {% endfor %}
-    {% endif %}
-    {% endwith %}
-  });
-</script>
 </body>
 </html>
