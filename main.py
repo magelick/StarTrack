@@ -2,14 +2,17 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
-from fastapi.responses import ORJSONResponse
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis.asyncio import Redis
+from fastapi.requests import Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 from src.settings import SETTINGS
 from src.api.router import router as api_router
 from src.middlewares import MIDDLEWARES
+from src.settings import templating
 
 
 @asynccontextmanager
@@ -36,16 +39,23 @@ app = FastAPI(
     title="StarTrack",
     summary="",
     description="",
-    default_response_class=ORJSONResponse,
+    version="1.0.0",
     lifespan=lifespan,
 )
 # Include routers
 app.include_router(router=api_router)
+# Mount static files
+app.mount(path="/static", app=StaticFiles(directory="static"), name="static")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templating.TemplateResponse("base.html", {"request": request})
+
 
 # Add all custom middlewares
 for MIDDLEWARE, OPTIONS in MIDDLEWARES:
     app.add_middleware(MIDDLEWARE, **OPTIONS)
-
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
