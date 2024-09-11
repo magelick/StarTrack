@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Вход
+{% endblock %}
+
 {% block content %}
 <div class="login-container">
   <h2>Вход в систему</h2>
@@ -15,4 +19,3 @@
   <p class="register-link">Нет аккаунта? <a href="{{ url_for('register') }}">Зарегистрируйтесь</a></p>
 </div>
 {% endblock %}
-
