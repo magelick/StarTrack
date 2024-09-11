@@ -18,7 +18,6 @@ from src.database.enums import (
     UserRoleEnum,
     UserSportTypeEnum,
     ChildGenderEnum,
-    ChildPulseRecoveryStatusEnum,
     ChildBloodTypeEnum,
     ChildEmotionalStateEnum,
     ChildDevelopmentEnum,
@@ -362,12 +361,6 @@ class ChildAcademicData(Base):
     subject_interest: Mapped[str] = mapped_column(
         VARCHAR(256), nullable=True
     )  # Interest in subjects
-    subject_gpa: Mapped[float] = mapped_column(
-        FLOAT, nullable=True
-    )  # Subject GPA
-    progress_ratio: Mapped[float] = mapped_column(
-        FLOAT, nullable=True
-    )  # Progress
     child_id: Mapped[int] = mapped_column(
         SMALLINT,
         ForeignKey(column="child.id", ondelete="CASCADE"),

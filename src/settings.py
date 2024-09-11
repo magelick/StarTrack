@@ -1,6 +1,7 @@
 from pathlib import Path
 
 from passlib.context import CryptContext
+from starlette.templating import Jinja2Templates
 
 from src.schemas.settings import Settings
 
@@ -10,3 +11,5 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SETTINGS = Settings()  # type: ignore
 # Initial pwd context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Mount templates
+templating = Jinja2Templates(directory="templates")
