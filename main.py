@@ -50,7 +50,7 @@ app.mount(path="/static", app=StaticFiles(directory="static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
-    return templating.TemplateResponse("base.html", {"request": request})
+    return templating.TemplateResponse("homepage.html", {"request": request})
 
 
 # Add all custom middlewares
