@@ -13,6 +13,7 @@ from src.settings import SETTINGS
 from src.api.router import router as api_router
 from src.middlewares import MIDDLEWARES
 from src.settings import templating
+from src.logger import logger
 
 
 @asynccontextmanager
@@ -58,4 +59,5 @@ for MIDDLEWARE, OPTIONS in MIDDLEWARES:
     app.add_middleware(MIDDLEWARE, **OPTIONS)
 
 if __name__ == "__main__":
+    logger.info("Starting Uvicorn server...")
     uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
