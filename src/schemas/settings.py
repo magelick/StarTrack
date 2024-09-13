@@ -18,3 +18,5 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE: int
     ALGORITHM: str
     TOKEN_TYPE: str
+    LOG_LEVEL: str = "INFO"
+    LOG_FORMAT: str = "%(levelname)s  %(asctime)s | %(message)s"
