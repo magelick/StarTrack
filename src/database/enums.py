@@ -8,6 +8,7 @@ class UserRoleEnum(Enum):
 
     PARENT = "Parent"
     COACH = "Coach"
+    TEACHER = "Teacher"
 
 
 class UserSportTypeEnum(Enum):
