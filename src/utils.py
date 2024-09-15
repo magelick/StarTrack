@@ -1,10 +1,11 @@
 from collections import Counter
 
+import numpy as np
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.enums import ChildPulseRecoveryStatusEnum, ChildGenderEnum
-
 
 from typing import Dict, Union
 from datetime import datetime, date, timedelta
@@ -12,9 +13,9 @@ from datetime import datetime, date, timedelta
 import jwt
 from jwt import PyJWTError
 
-
 from src.repositories.models import ChildRepository
 from src.settings import pwd_context, SETTINGS
+
 
 # from src.settings import pwd_context, SETTINGS
 
@@ -269,7 +270,7 @@ async def calculate_adolescence_info(
 
 
 async def calculate_disease_frequency(
-    diseases, start_date=None, end_date=None
+    diseases: list, start_date=None, end_date=None
 ):
     """
     Рассчитать частоту заболеваний за определённый период времени.
@@ -316,7 +317,7 @@ async def get_season(
         raise ValueError(f"Invalid date_data: {date_data}")
 
 
-async def calculate_seasonal_trends(diseases):
+async def calculate_seasonal_trends(diseases: list):
     """
     Рассчитывается частота заболеваний по сезонам года.
     """
@@ -330,7 +331,7 @@ async def calculate_seasonal_trends(diseases):
         return dict(season_frequency)
 
 
-async def calculate_rohrer_index(weight_kg, height_cm):
+async def calculate_rohrer_index(weight_kg: float, height_cm: float):
     """
     Рассчитывает индекс Рорера
     """
@@ -348,7 +349,7 @@ async def calculate_rohrer_index(weight_kg, height_cm):
     return rohrer_index, interpretation
 
 
-async def calculate_height_weight_ratio(weight_kg, height_cm):
+async def calculate_height_weight_ratio(weight_kg: float, height_cm: float):
     """
     Рассчитывает соотношение веса к росту
     """
@@ -358,7 +359,7 @@ async def calculate_height_weight_ratio(weight_kg, height_cm):
     return ratio
 
 
-async def calculate_bsa(height_cm, weight_kg):
+async def calculate_bsa(height_cm: float, weight_kg: float):
     """
     Рассчитывает площадь поверхности тела (BSA) на основе роста и веса
     """
@@ -370,46 +371,42 @@ async def calculate_bsa(height_cm, weight_kg):
     return bsa
 
 
-async def calculate_ideal_body_weight(height_cm, age_years):
+async def calculate_ideal_body_weight(height_cm: float, age_year: int):
     """
     Рассчитывает идеальную массу тела в зависимости от роста и возраста
     """
 
-    ideal_weight = height_cm - 100 - (age_years / 10 * 0.5)
+    ideal_weight = height_cm - 100 - (age_year / 10 * 0.5)
 
     return ideal_weight
 
 
-async def interpret_bmi(bmi, gender: ChildGenderEnum):
+async def interpret_bmi(bmi: float, gender: ChildGenderEnum):
     """
     Интерпретирует ИМТ на основе возрастных и половых перцентильных таблиц.
     """
 
-    result = None
-
     if gender == ChildGenderEnum.FEMALE:
-        if bmi < 16:
-            result = "Недостаточная масса тела"
-        elif 16 <= bmi < 21:
-            result = "Нормальная масса тела"
-        elif 21 <= bmi < 25:
-            result = "Избыточная масса тела"
+        if bmi < 16.0:
+            return "Недостаточная масса тела"
+        elif 16.0 <= bmi < 21.0:
+            return "Нормальная масса тела"
+        elif 21.0 <= bmi < 25.0:
+            return "Избыточная масса тела"
         else:
-            result = "Ожирение"
+            return "Ожирение"
     elif gender == ChildGenderEnum.MALE:
-        if bmi < 16:
-            result = "Недостаточная масса тела"
-        elif 16 <= bmi < 22:
-            result = "Нормальная масса тела"
-        elif 22 <= bmi < 26:
-            result = "Избыточная масса тела"
+        if bmi < 16.0:
+            return "Недостаточная масса тела"
+        elif 16.0 <= bmi < 22.0:
+            return "Нормальная масса тела"
+        elif 22.0 <= bmi < 26.0:
+            return "Избыточная масса тела"
         else:
-            result = "Ожирение"
-
-    return result
+            return "Ожирение"
 
 
-async def calculate_bmi(weight_kg, height_m):
+async def calculate_bmi(weight_kg: float, height_m: float):
     """
     Рассчитывает индекс массы тела (ИМТ) на основе веса и роста.
     """
@@ -419,7 +416,7 @@ async def calculate_bmi(weight_kg, height_m):
     return bmi
 
 
-async def calculate_subject_gpa(grades):
+async def calculate_subject_gpa(grades: list):
     """
     Вычисляет средний балл (GPA) по предметам на основе списка оценок.
     """
@@ -432,7 +429,7 @@ async def calculate_subject_gpa(grades):
     return subject_gpa
 
 
-async def get_quarter(month):
+async def get_quarter(month: int):
     """
     Определяет номер четверти на основе месяца в учебном году.
     """
@@ -448,7 +445,7 @@ async def get_quarter(month):
         return "Летний период"
 
 
-async def linear_regression_quarters(quarters, grades, np=None):
+async def linear_regression_quarters(quarters: list, grades: list):
     """
     Выполняет линейную регрессию для анализа успеваемости по четвертям.
     """
@@ -474,7 +471,7 @@ async def analyze_performance(dates, grades):
     if not dates or not grades:
         return None
 
-    quarters = [await get_quarter(item_date[0]) for item_date in dates]
+    quarters = [await get_quarter(item_date) for item_date in dates]
 
     quarter_map = {"1": 1, "2": 2, "3": 3, "4": 4}
     numeric_quarters = [quarter_map[q] for q in quarters if q in quarter_map]
@@ -485,7 +482,9 @@ async def analyze_performance(dates, grades):
     return await linear_regression_quarters(numeric_quarters, grades)
 
 
-async def calculate_progress_ratio(current_avg_grade, previous_avg_grade):
+async def calculate_progress_ratio(
+    current_avg_grade: int, previous_avg_grade: int
+):
     """
     Вычисляет коэффициент прогресса для оценки изменения успеваемости.
     """
@@ -496,26 +495,25 @@ async def calculate_progress_ratio(current_avg_grade, previous_avg_grade):
     return progress_ratio
 
 
-async def calculate_pearson_correlation(x, y, np=None):
+async def calculate_pearson_correlation(x: list, y: list):
     """
     Вычисляет коэффициент корреляции Пирсона между двумя наборами данных.
     """
-
     if len(x) == 0 or len(y) == 0 or len(x) != len(y):
         return None
 
     # Преобразование в массивы
-    x = np.array(x)
-    y = np.array(y)
+    x_array = np.array(x)
+    y_array = np.array(y)
 
     # Вычисление средних значений
-    x_mean = np.mean(x)
-    y_mean = np.mean(y)
+    x_mean = np.mean(x_array)
+    y_mean = np.mean(y_array)
 
     # Вычисление числителя и знаменателя
-    numerator = np.sum((x - x_mean) * (y - y_mean))
+    numerator = np.sum((x_array - x_mean) * (y_array - y_mean))
     denominator = np.sqrt(
-        np.sum((x - x_mean) ** 2) * np.sum((y - y_mean) ** 2)
+        np.sum((x_array - x_mean) ** 2) * np.sum((y_array - y_mean) ** 2)
     )
 
     if denominator == 0:
@@ -526,7 +524,7 @@ async def calculate_pearson_correlation(x, y, np=None):
     return r
 
 
-async def predict_final_grade(grades, np=None):
+async def predict_final_grade(grades: list):
     """
     Прогнозирует итоговую оценку на основе среднего значения имеющихся оценок.
     """
@@ -536,9 +534,9 @@ async def predict_final_grade(grades, np=None):
         return None
 
     # Преобразование в массив NumPy для удобства расчетов
-    grades = np.array(grades)
+    grades_array = np.array(grades)
 
     # Вычисление среднего значения оценок
-    predicted_grade = np.mean(grades)
+    predicted_grade = np.mean(grades_array)
 
     return predicted_grade
