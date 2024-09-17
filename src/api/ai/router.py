@@ -4,7 +4,9 @@ from starlette import status
 
 from src.gpt import generate_recommend
 
-router = APIRouter(prefix="/ai", default_response_class=ORJSONResponse)
+router = APIRouter(
+    prefix="/ai", tags=["AI"], default_response_class=ORJSONResponse
+)
 
 
 @router.get(

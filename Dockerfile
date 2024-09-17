@@ -14,7 +14,7 @@ RUN pip install -U poetry
 RUN poetry config virtualenvs.create false
 # Install project dependencies
 COPY pyproject.toml poetry.lock /app/
-RUN poetry install --no-dev --no-interaction --no-ansi
+RUN poetry install --only main --no-interaction --no-ansi
 
 # copy all other fise in wotk direactory
 COPY . /app/
