@@ -21,3 +21,4 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: str = "%(levelname)s  %(asctime)s | %(message)s"
     OPENAI_API_KEY: str
+      
