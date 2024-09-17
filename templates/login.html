@@ -6,16 +6,21 @@
 
 {% block content %}
 <div class="login-container">
-  <h2>Вход в систему</h2>
-  <form method="POST" action="{{ url_for('login') }}" class="login-form">
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required>
-
-    <label for="password">Пароль</label>
-    <input type="password" id="password" name="password" required>
-
-    <button type="submit" class="submit-button">Войти</button>
-  </form>
-  <p class="register-link">Нет аккаунта? <a href="{{ url_for('register') }}">Зарегистрируйтесь</a></p>
+  <div class="login-box">
+    <h2>Добро пожаловать в StarTrack!</h2>
+    <button class="gmail-button">
+      <img src="Иконка Gmail" alt="G" class="gmail-icon">
+      Продолжить через Gmail
+    </button>
+    <input type="email" placeholder="Email" class="email-input">
+    <div class="checkbox-container">
+      <input type="checkbox" id="agree">
+      <label for="agree">
+        Соглашаюсь на обработку <a href="#">персональных данных</a> и даю согласие на что-нибудь еще
+      </label>
+    </div>
+    <button class="submit-button">Продолжить</button>
+  </div>
 </div>
 {% endblock %}
+

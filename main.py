@@ -54,6 +54,11 @@ async def read_root(request: Request):
     return templating.TemplateResponse("homepage.html", {"request": request})
 
 
+@app.get("/login", response_class=HTMLResponse)
+async def login_template(request: Request):
+    return templating.TemplateResponse("login.html", {"request": request})
+
+
 # Add all custom middlewares
 for MIDDLEWARE, OPTIONS in MIDDLEWARES:
     app.add_middleware(MIDDLEWARE, **OPTIONS)
