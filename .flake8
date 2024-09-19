@@ -4,4 +4,4 @@ exclude = .git, .gitignore, poetry.lock, myproject.toml, README.md, __init__.py,
 # max length of string
 max-line-length = 79
 # what mistake ignore
-ignore = E203, E266, E501, W503, W391
+ignore = E203, E266, E501, W503, W391, W291
