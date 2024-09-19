@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Тестирование AI
+{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Меню на неделю</h1>
+    <button id="load-recommends">Загрузить рекомендации</button>
+    <div id="recommends">
+        <!-- Здесь будет отображаться контент -->
+    </div>
+</div>
+
+<script>
+   document.getElementById('load-recommends').addEventListener('click', function() {
+        const socket = new WebSocket('http://0.0.0.0:8001/api/ai/recommends');
+
+        // Обработчик открытия соединения
+        socket.onopen = function() {
+            console.log('WebSocket соединение открыто');
+        };
+
+        // Обработчик получения сообщений
+        socket.onmessage = function(event) {
+            const recommendsDiv = document.getElementById('recommends');
+            // Добавляем полученный контент в блок по мере его поступления
+            recommendsDiv.innerHTML += event.data;
+        };
+
+        // Обработчик закрытия соединения
+        socket.onclose = function() {
+            console.log('WebSocket соединение закрыто');
+        };
+
+        // Обработчик ошибок
+        socket.onerror = function(error) {
+            console.error('Ошибка WebSocket:', error);
+        };
+    });
+</script>
+{% endblock %}

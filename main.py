@@ -49,9 +49,14 @@ app.include_router(router=api_router)
 app.mount(path="/static", app=StaticFiles(directory="static"), name="static")
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get(path="/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templating.TemplateResponse("homepage.html", {"request": request})
+
+
+@app.get(path="/ai_testing", response_class=HTMLResponse)
+async def read_ai(request: Request):
+    return templating.TemplateResponse("ai_test.html", {"request": request})
 
 
 # Add all custom middlewares
