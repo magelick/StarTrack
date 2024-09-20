@@ -59,6 +59,11 @@ async def read_ai(request: Request):
     return templating.TemplateResponse("ai_test.html", {"request": request})
 
 
+@app.get(path="/chat_ai_testing", response_class=HTMLResponse)
+async def chat_ai(request: Request):
+    return templating.TemplateResponse("ai_chat.html", {"request": request})
+
+
 # Add all custom middlewares
 for MIDDLEWARE, OPTIONS in MIDDLEWARES:
     app.add_middleware(MIDDLEWARE, **OPTIONS)
