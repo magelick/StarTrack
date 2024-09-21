@@ -40,15 +40,3 @@ async def generate_recommends(text: str) -> AsyncGenerator:
     data = await model.generate_content_async(text, stream=True)
     async for chunk in data:
         yield chunk.text
-
-
-async def create_chat(message: str):
-    """
-    Function which create async chat
-    :param message:
-    :return:
-    """
-    chat = model.start_chat(history=[])
-    response = await chat.send_message_async(content=message, stream=True)
-    async for chunk in response:
-        yield chunk.text
