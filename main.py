@@ -54,14 +54,19 @@ async def read_root(request: Request):
     return templating.TemplateResponse("homepage.html", {"request": request})
 
 
-@app.get("/login", response_class=HTMLResponse)
-async def login_template(request: Request):
+@app.get(path="/login", response_class=HTMLResponse)
+async def read_login(request: Request):
     return templating.TemplateResponse("login.html", {"request": request})
 
 
 @app.get(path="/ai_testing", response_class=HTMLResponse)
 async def read_ai(request: Request):
     return templating.TemplateResponse("ai_test.html", {"request": request})
+
+
+@app.get(path="/chat_ai_testing", response_class=HTMLResponse)
+async def chat_ai(request: Request):
+    return templating.TemplateResponse("ai_chat.html", {"request": request})
 
 
 # Add all custom middlewares
