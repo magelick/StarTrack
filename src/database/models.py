@@ -59,7 +59,6 @@ class User(Base):
     email: Mapped[str] = mapped_column(
         VARCHAR(128), unique=True, nullable=False
     )
-    password: Mapped[str] = mapped_column(VARCHAR(128), nullable=False)
     role: Mapped[UserRoleEnum] = mapped_column(SQL_ENUM(UserRoleEnum, name="user_role_enum"), nullable=False)  # type: ignore
     created_at: Mapped[TIMESTAMP] = mapped_column(
         TIMESTAMP, default=datetime.now, nullable=False
