@@ -161,3 +161,4 @@ cython_debug/
 .idea/
 
 test_db.sqlite
+client_secrets.json

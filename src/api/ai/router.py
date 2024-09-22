@@ -4,7 +4,7 @@ from src.gemini import generate_recommends, clean_and_format_text
 
 router = APIRouter(
     prefix="/ai",
-    tags=["AI FUNCTIONALITY"],
+    tags=["AI"],
     default_response_class=ORJSONResponse,
 )
 

@@ -8,7 +8,6 @@ from src.database.enums import (
     ChildParentalAttentionEnum,
 )
 from src.schemas.base import DTO
-from src.schemas.custom_types import AlphaStr
 
 
 class ChildFamilyDataBasic(DTO):
@@ -16,13 +15,13 @@ class ChildFamilyDataBasic(DTO):
     Basic Child Family Data schema
     """
 
-    family_info: Optional[AlphaStr] = Field(
+    family_info: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Family Info",
         description="Family Info current child family data",
     )
-    family_involvement: Optional[AlphaStr] = Field(
+    family_involvement: Optional[str] = Field(
         default=None,
         max_length=128,
         title="Family Involvement",

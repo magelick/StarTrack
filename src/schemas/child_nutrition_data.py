@@ -4,7 +4,6 @@ from typing import Optional
 from pydantic import Field, PositiveInt
 
 from src.schemas.base import DTO
-from src.schemas.custom_types import AlphaStr
 
 
 class ChildNutritionDataBasic(DTO):
@@ -12,7 +11,7 @@ class ChildNutritionDataBasic(DTO):
     Basic Child Nutrition Data schema
     """
 
-    dietary_info: Optional[AlphaStr] = Field(
+    dietary_info: Optional[str] = Field(
         default=None,
         title="Dietary Info",
         description="Dietary Info current child nutrition data",
@@ -27,19 +26,19 @@ class ChildNutritionDataBasic(DTO):
         title="Beverage Consumption",
         description="Beverage Consumption current child nutrition data",
     )
-    supplements_or_vitamins: Optional[AlphaStr] = Field(
+    supplements_or_vitamins: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Supplements or Vitamins",
         description="Supplements or Vitamins current child nutrition data",
     )
-    reactions_to_food: Optional[AlphaStr] = Field(
+    reactions_to_food: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Reactions to Food",
         description="Reactions to Food current child nutrition data",
     )
-    allergies_and_intolerances: Optional[AlphaStr] = Field(
+    allergies_and_intolerances: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Allergies and Intolerances",

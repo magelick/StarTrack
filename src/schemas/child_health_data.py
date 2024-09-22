@@ -5,7 +5,6 @@ from pydantic import Field, PositiveInt
 
 from src.database.enums import ChildEmotionalStateEnum
 from src.schemas.base import DTO
-from src.schemas.custom_types import AlphaStr
 
 
 class ChildHealthDataBasic(DTO):
@@ -13,13 +12,13 @@ class ChildHealthDataBasic(DTO):
     Basic Child Health Data schema
     """
 
-    current_symptoms: Optional[AlphaStr] = Field(
+    current_symptoms: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Current Symptoms",
         description="Academic Performance current child health data",
     )
-    frequency_of_illnesses: Optional[AlphaStr] = Field(
+    frequency_of_illnesses: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Frequency of Illnesses",
@@ -30,7 +29,7 @@ class ChildHealthDataBasic(DTO):
         title="Doctor Visits",
         description="Doctor Visits current child health data",
     )
-    stress_anxiety_depression: Optional[AlphaStr] = Field(
+    stress_anxiety_depression: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Stress Anxiety Depression",

@@ -4,7 +4,6 @@ from typing import Optional
 from pydantic import Field, PositiveInt
 
 from src.schemas.base import DTO
-from src.schemas.custom_types import AlphaStr
 from src.database.enums import ChildGenderEnum
 
 
@@ -13,13 +12,13 @@ class ChildBasic(DTO):
     Basic Child schema
     """
 
-    first_name: AlphaStr = Field(
+    first_name: str = Field(
         default=...,
         max_length=128,
         title="First Name",
         description="First name current child",
     )
-    last_name: AlphaStr = Field(
+    last_name: str = Field(
         default=...,
         max_length=128,
         title="Last Name",

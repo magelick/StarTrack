@@ -1,81 +1,57 @@
 from pathlib import Path
 from typing import List, Tuple
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import ORJSONResponse
 from fastapi_cache.decorator import cache
+from fastapi_sso import GoogleSSO
 from pydantic import PositiveInt
 from sqlalchemy.exc import NoResultFound
 from starlette import status
 
 from src.schemas.token import TokenData
-from src.schemas.user import UserRegisterForm, UserDetail, UserLoginForm
+from src.schemas.user import UserDetail, UserRegisterForm
 from src.services.user import UserService
-from src.dependencies import UOWDep
+from src.dependencies import UOWDep, google_sso
+from src.utils import create_access_token, create_refresh_token
 
 router = APIRouter(
     prefix="/auth", tags=["Users"], default_response_class=ORJSONResponse
 )
 
 
-@router.post(
-    path="/register",
-    status_code=status.HTTP_201_CREATED,
+@router.get(path="/google/login", name="OAuth2 across Google")
+async def google_login(google: GoogleSSO = google_sso):
+    return await google.get_login_redirect()
+
+
+@router.get(
+    path="/google/callback",
     response_model=Tuple[UserDetail, TokenData],
-    response_model_exclude={"password"},
-    name="Register user",
+    name="OAuth2 Google Callback",
 )
-async def register_user(
-    uow: UOWDep, register_form: UserRegisterForm
+async def google_callback(
+    request: Request, uow: UOWDep, google: GoogleSSO = google_sso
 ) -> Tuple[UserDetail, TokenData]:
-    """
-    Register user
-    :param uow:
-    :param register_form:
-    :return:
-    """
-    new_user = await UserService().register_user(
-        uow=uow, register_form=register_form
+    login_user = await google.verify_and_process(request)
+    user = await UserService().get_user(uow=uow, email=login_user.email)
+    if user is None:
+        data = {
+            "email": login_user.email,
+            "first_name": login_user.first_name,
+            "last_name": login_user.last_name,
+            "role": "Parent",
+        }
+        new_user = await UserService().register_user(
+            uow=uow, register_form=UserRegisterForm(**data)  # type: ignore
+        )
+        return new_user
+    access_token = await create_access_token(sub=str(user.id))
+    refresh_token = await create_refresh_token(sub=str(user.id))
+    token_data = TokenData(
+        access_token=access_token, refresh_token=refresh_token
     )
-    return new_user
-
-
-@router.post(
-    path="/login",
-    status_code=status.HTTP_201_CREATED,
-    response_model=Tuple[UserDetail, TokenData],
-    name="Login user",
-)
-async def login_user(
-    uow: UOWDep, login_form: UserLoginForm
-) -> Tuple[UserDetail, TokenData]:
-    """
-    Login user
-    :param uow:
-    :param login_form:
-    :return:
-    """
-    login = await UserService().login_user(uow=uow, login_form=login_form)
-    return login
-
-
-@router.post(
-    path="/token/{refresh_token}",
-    status_code=status.HTTP_200_OK,
-    response_model=TokenData,
-    name="Refresh access token",
-)
-@cache(expire=120)
-async def refresh_access_token(refresh_token: str) -> TokenData:
-    """
-    Refresh access token
-    :param refresh_token:
-    :return:
-    """
-    tokens = await UserService().refresh_access_token(
-        refresh_token=refresh_token
-    )
-    return tokens
+    return user, token_data
 
 
 @router.get(
@@ -96,7 +72,7 @@ async def get_list_of_users(uow: UOWDep) -> List[UserDetail]:
 
 
 @router.delete(
-    path="/{user_id}/",
+    path="/users/{user_id}/",
     status_code=status.HTTP_200_OK,
     name="Delete user by ID",
 )
