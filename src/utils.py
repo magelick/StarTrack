@@ -14,10 +14,7 @@ import jwt
 from jwt import PyJWTError
 
 from src.repositories.models import ChildRepository
-from src.settings import pwd_context, SETTINGS
-
-
-# from src.settings import pwd_context, SETTINGS
+from src.settings import SETTINGS
 
 
 async def get_child(
@@ -33,25 +30,6 @@ async def get_child(
     stmt = select(uow_children.model).filter(uow_children.model.id == child_id)
     result = await uow_session.execute(stmt)
     return result.scalar_one()
-
-
-async def create_hash_password(password: str) -> str:
-    """
-    Create hash password
-    :param password:
-    :return:
-    """
-    return pwd_context.hash(password)
-
-
-async def verify_password(password: str, hash_password: str) -> bool:
-    """
-    Verify password
-    :param password:
-    :param hash_password:
-    :return:
-    """
-    return pwd_context.verify(secret=password, hash=hash_password)
 
 
 async def create_access_token(sub: Union[str, int]) -> str:

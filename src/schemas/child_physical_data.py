@@ -4,7 +4,6 @@ from typing import Optional
 from pydantic import Field, PositiveInt
 
 from src.schemas.base import DTO
-from src.schemas.custom_types import AlphaStr
 
 
 class ChildPhysicalDataBasic(DTO):
@@ -12,7 +11,7 @@ class ChildPhysicalDataBasic(DTO):
     Basic Child Physical Data schema
     """
 
-    physical_type: Optional[AlphaStr] = Field(
+    physical_type: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Physical Type",
@@ -23,31 +22,31 @@ class ChildPhysicalDataBasic(DTO):
         title="Daily Activity Level",
         description="Daily Activity Level current child physical data",
     )
-    flexibility: Optional[AlphaStr] = Field(
+    flexibility: Optional[str] = Field(
         default=None,
         max_length=128,
         title="Flexibility",
         description="Flexibility current child physical data",
     )
-    coordination: Optional[AlphaStr] = Field(
+    coordination: Optional[str] = Field(
         default=None,
         max_length=128,
         title="Coordination",
         description="Coordination current child physical data",
     )
-    injuries_and_chronic_pains: Optional[AlphaStr] = Field(
+    injuries_and_chronic_pains: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Injuries and Chronic Pains",
         description="Injuries and Chronic Pains current child physical data",
     )
-    sports_achievements: Optional[AlphaStr] = Field(
+    sports_achievements: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Sports Achievements",
         description="Sports Achievements current child physical data",
     )
-    interests: Optional[AlphaStr] = Field(
+    interests: Optional[str] = Field(
         default=None,
         max_length=256,
         title="Interests",
