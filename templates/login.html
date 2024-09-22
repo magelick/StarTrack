@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StarTrack Login</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Login - StarTrack{% endblock %}
+
+{% block content %}
 <div class="main">
   <div class="form-container">
     <div class="header">
@@ -18,15 +13,30 @@
       <img src="{{ url_for('static', filename='google-icon.jpg') }}" alt="Google Icon" class=google-icon>
       <span>Продолжить через gmail</span>
     </button>
+    <button class="email-btn">Продолжить через почту</button>
     <label>
-      <input type="email" placeholder="Email" class="email-input">
+      <input type="email" placeholder="Email" class="email-input" id="email-input">
+      <span class="error-message" id="error-message" style="display: none;">Неверный формат email</span>
     </label>
     <div class="checkbox-container">
       <input type="checkbox" id="personal-data">
       <label for="personal-data">Соглашаюсь на обработку <a href="#">персональных данных</a> и даю согласие на что-нибудь еще</label>
     </div>
+    <span id="checkbox-error" class="checkbox-error-message" style="display: none;">Пожалуйста, согласитесь на обработку персональных данных.</span>
     <button class="submit-btn">Продолжить</button>
   </div>
 </div>
-</body>
-</html>
+<div class="message-container" id="message-container" style="display: none;">
+  <div class="message-form">
+    <div class="message-header">
+      <img src="{{ url_for('static', filename='mail-icon.jpg') }}" alt="Mail Icon" class="mail-icon">
+      <h2>Проверь свою почту!</h2>
+    </div>
+    <div class="message-text">
+      <p>Мы отправили ссылку для активации
+        на <span id="user-email"></span>.</p>
+        <p>Письмо может попасть в спам.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
