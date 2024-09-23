@@ -46,7 +46,11 @@ app = FastAPI(
 # Include routers
 app.include_router(router=api_router)
 # Mount static files
-app.mount(path="/static", app=StaticFiles(directory="static"), name="static")
+app.mount(
+    path="/static",
+    app=StaticFiles(directory="static", check_dir=True),
+    name="static",
+)
 
 
 @app.get(path="/", response_class=HTMLResponse)
