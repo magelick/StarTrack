@@ -8,6 +8,7 @@ from sqlalchemy.exc import NoResultFound
 from starlette import status
 
 from src.dependencies import UOWDep
+from src.logger import logger
 from src.schemas.child_nutrition_data import (
     ChildNutritionDataDetail,
     ChildNutritionDataAddForm,
@@ -29,7 +30,7 @@ router = APIRouter(
     response_model=List[ChildNutritionDataDetail],
     name="Get list of child nutrition datas",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_list_child_nutrition_datas(
     uow: UOWDep,
 ) -> List[ChildNutritionDataDetail]:
@@ -38,10 +39,16 @@ async def get_list_child_nutrition_datas(
     :param uow:
     :return:
     """
-    child_nutrition_datas = (
-        await ChildNutritionDataService().get_child_nutrition_datas(uow=uow)
-    )
-    return child_nutrition_datas
+    try:
+        child_nutrition_datas = (
+            await ChildNutritionDataService().get_child_nutrition_datas(
+                uow=uow
+            )
+        )
+        return child_nutrition_datas
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.post(
@@ -59,12 +66,16 @@ async def add_new_child_nutrition_data(
     :param add_form:
     :return:
     """
-    new_child_nutrition_data = (
-        await ChildNutritionDataService().add_child_nutrition_data(
-            uow=uow, child=add_form
+    try:
+        new_child_nutrition_data = (
+            await ChildNutritionDataService().add_child_nutrition_data(
+                uow=uow, child=add_form
+            )
         )
-    )
-    return new_child_nutrition_data
+        return new_child_nutrition_data
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.get(
@@ -73,7 +84,7 @@ async def add_new_child_nutrition_data(
     response_model=ChildNutritionDataDetail,
     name="Get child nutrition data by ID",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_child_nutrition_data_by_id(
     uow: UOWDep, child_nutrition_data_id: PositiveInt = Path(default=..., ge=1)
 ) -> ChildNutritionDataDetail:
@@ -90,7 +101,8 @@ async def get_child_nutrition_data_by_id(
             )
         )
         return child_nutrition_data
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child nutrition data not found",
@@ -122,7 +134,8 @@ async def update_child_nutrition_data_by_id(
             )
         )
         return update_child_data
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child nutrition data not found",
@@ -148,7 +161,8 @@ async def delete_child_nutrition_data_by_id(
             uow=uow, id=child_nutrition_data_id
         )
         return {"msg": "Child nutrition data has been successfully removed"}
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child nutrition data not found",

@@ -8,6 +8,7 @@ from sqlalchemy.exc import NoResultFound
 from starlette import status
 
 from src.dependencies import UOWDep
+from src.logger import logger
 from src.schemas.child_family_data import (
     ChildFamilyDataDetail,
     ChildFamilyDataAddForm,
@@ -29,7 +30,7 @@ router = APIRouter(
     response_model=List[ChildFamilyDataDetail],
     name="Get list of family child datas",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_list_child_family_datas(
     uow: UOWDep,
 ) -> List[ChildFamilyDataDetail]:
@@ -38,10 +39,14 @@ async def get_list_child_family_datas(
     :param uow:
     :return:
     """
-    child_family_datas = await ChildFamilyDataService().get_child_family_datas(
-        uow=uow
-    )
-    return child_family_datas
+    try:
+        child_family_datas = (
+            await ChildFamilyDataService().get_child_family_datas(uow=uow)
+        )
+        return child_family_datas
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.post(
@@ -59,12 +64,16 @@ async def add_new_child_family_data(
     :param add_form:
     :return:
     """
-    new_child_family_data = (
-        await ChildFamilyDataService().add_child_family_data(
-            uow=uow, child=add_form
+    try:
+        new_child_family_data = (
+            await ChildFamilyDataService().add_child_family_data(
+                uow=uow, child=add_form
+            )
         )
-    )
-    return new_child_family_data
+        return new_child_family_data
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.get(
@@ -73,7 +82,7 @@ async def add_new_child_family_data(
     response_model=ChildFamilyDataDetail,
     name="Get child family data by ID",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_child_family_data_by_id(
     uow: UOWDep, child_family_data_id: PositiveInt = Path(default=..., ge=1)
 ) -> ChildFamilyDataDetail:
@@ -90,7 +99,8 @@ async def get_child_family_data_by_id(
             )
         )
         return child_family_data
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child family data not found",
@@ -122,7 +132,8 @@ async def update_child_family_data_by_id(
             )
         )
         return update_child_family_data
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child family data not found",
@@ -148,7 +159,8 @@ async def delete_child_family_data_by_id(
             uow=uow, id=child_family_data_id
         )
         return {"msg": "Child family data has been successfully removed"}
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child family data not found",

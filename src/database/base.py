@@ -1,20 +1,23 @@
-from sqlalchemy import Column, SMALLINT
+from sqlalchemy import Column, INT
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
     async_sessionmaker,
     AsyncSession,
+    AsyncAttrs,
 )
 from sqlalchemy.orm import DeclarativeBase, declared_attr
 
 from src.settings import SETTINGS
 
 
-class Base(DeclarativeBase):
+class Base(AsyncAttrs, DeclarativeBase):
     """
     Base Model
     """
 
-    id = Column(SMALLINT, primary_key=True)
+    __abstract__ = True
+
+    id = Column(INT, primary_key=True, autoincrement=True)
 
     engine = create_async_engine(
         url=SETTINGS.DATABASE_URL.unicode_string(),

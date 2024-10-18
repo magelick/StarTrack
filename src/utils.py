@@ -32,7 +32,7 @@ async def get_child(
     return result.scalar_one()
 
 
-async def create_access_token(sub: Union[str, int]) -> str:
+def create_access_token(sub: Union[str, int]) -> str:
     """
     Create access token
     :param sub:
@@ -66,7 +66,7 @@ async def verify_access_token(access_token: str):
     return payload
 
 
-async def create_refresh_token(sub: Union[str, int]) -> str:
+def create_refresh_token(sub: Union[str, int]) -> str:
     """
     Create refresh token
     :param sub:

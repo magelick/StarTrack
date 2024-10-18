@@ -1,9 +1,9 @@
 from sqlalchemy import select
 
 from starlette.authentication import (
-    BaseUser,
     AuthenticationBackend,
     AuthCredentials,
+    BaseUser,
 )
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.requests import HTTPConnection
@@ -18,8 +18,8 @@ class UserInfo(BaseUser):
     Class User info
     """
 
-    def __init__(self, pk: str):
-        self.pk = pk
+    def __init__(self, user: User):
+        self.user = user
 
     @property
     def is_authenticated(self) -> bool:
@@ -30,12 +30,12 @@ class UserInfo(BaseUser):
         return True
 
     @property
-    def identity(self) -> str:
+    def identity(self) -> int:  # type: ignore
         """
         Return User ID
         :return:
         """
-        return self.pk
+        return int(self.user.id)
 
 
 class JWTAuthenticationBackend(AuthenticationBackend):
@@ -76,7 +76,7 @@ class JWTAuthenticationBackend(AuthenticationBackend):
                     return  # type: ignore
                 else:
                     return AuthCredentials(["authenticated"]), UserInfo(
-                        pk=str(user.id)
+                        user=user
                     )
 
 

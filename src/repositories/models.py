@@ -9,8 +9,17 @@ from src.database.models import (
     ChildAcademicData,
     ChildFamilyData,
     ChildNutritionData,
+    UserChild,
 )
 from src.repositories.base import SQLAlchemyRepository
+
+
+class UserChildRepository(SQLAlchemyRepository):
+    """
+    Repository for UserChild model
+    """
+
+    model = UserChild
 
 
 class UserRepository(SQLAlchemyRepository):

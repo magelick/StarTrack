@@ -1,5 +1,8 @@
 from typing import List
 
+from fastapi.requests import Request
+
+from src.middlewares import UserInfo
 from src.unit_of_work import AbstractUnitOfWork
 from src.schemas.child import ChildDetail, ChildAddForm, ChildUpdateForm
 
@@ -24,18 +27,28 @@ class ChildService:
             ]
 
     async def add_child(
-        self, uow: AbstractUnitOfWork, child: ChildAddForm
+        self, uow: AbstractUnitOfWork, child: ChildAddForm, request: Request
     ) -> ChildDetail:
         """
         Add new child
+        :param user_id:
         :param uow:
         :param child:
         :return:
         """
         async with uow:
+            if not isinstance(request.user, UserInfo):
+                raise ValueError(
+                    "User is not authenticated or not of type UserInfo"
+                )
+            print(request.user)
             new_child = await uow.children.add_one(child.model_dump())
+            user_child_data = {
+                "user_id": request.user.identity,
+                "child_id": new_child.id,
+            }
+            await uow.users_children.add_one(data=user_child_data)
             await uow.commit()
-
             return ChildDetail.model_validate(new_child, from_attributes=True)
 
     async def get_child(
@@ -48,7 +61,6 @@ class ChildService:
         """
         async with uow:
             child = await uow.children.get_one(**filter_by)
-
             return ChildDetail.model_validate(child, from_attributes=True)
 
     async def update_child(
@@ -65,7 +77,6 @@ class ChildService:
                 child.model_dump(), **filter_by
             )
             await uow.commit()
-
             return ChildDetail.model_validate(
                 update_child, from_attributes=True
             )

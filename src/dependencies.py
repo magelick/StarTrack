@@ -1,13 +1,9 @@
 import json
 from pathlib import Path
-from typing import AsyncGenerator
 
 from fastapi_sso import GoogleSSO
-from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 from starlette.requests import Request
-
-from src.database.models import Base
 
 from typing import Annotated
 
@@ -16,16 +12,25 @@ from fastapi import Depends, HTTPException
 from src.unit_of_work import AbstractUnitOfWork, UnitOfWork
 
 
-async def _get_async_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_current_user(uow: AbstractUnitOfWork, request: Request):
     """
-    Depend,which create session to database
+    Get current user
+    :param uow:
+    :param request:
     :return:
     """
-    async with Base.async_session_maker() as session:
-        yield session
+    async with uow:
+        user = await uow.users.get_one(id=request.user.identity)
+        if not user:
+            pass
 
 
 def _is_authenticated(request: Request):
+    """
+
+    :param request:
+    :return:
+    """
     if not request.user.is_authenticated:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -70,9 +75,6 @@ def get_google_sso() -> GoogleSSO:
 
 
 # Initial FastAPI dependencies
-get_async_db_session = Annotated[
-    AsyncGenerator[AsyncSession, None], Depends(dependency=_get_async_session)
-]
 UOWDep = Annotated[AbstractUnitOfWork, Depends(dependency=UnitOfWork)]
 is_authenticated = Depends(dependency=_is_authenticated)
 google_sso = Depends(dependency=get_google_sso)
