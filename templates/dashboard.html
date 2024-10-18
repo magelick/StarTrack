@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет родителя</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="personal-dashboard">
+    <header class="dashboard-header">
+        <div class="logo-dashboard">LOGO</div>
+        <div class="header-buttons">
+            <div class="dropdown">
+                <div class="avatar">NR</div>
+                <img src="{{ url_for('static', filename='arrow-down.svg') }}" alt="Стрелка вниз" class="arrow-down">
+            </div>
+        </div>
+    </header>
+</div>
+<div class="top-menu">
+    <div class="tab health">Здоровье</div>
+    <div class="tab nutrition">Питание</div>
+    <div class="tab sport">Спорт</div>
+    <div class="tab upbringing">Воспитание</div>
+    <div class="tab education">Образование</div>
+    <div class="tab psychology">Психология</div>
+</div>
+<div class="side-menu-container">
+    <div class="side-menu">
+        <img src="static/arrow.svg" class="arrow-icon" alt="arrow" onclick="toggleMenu()">
+
+        <div class="child-icon">
+            <div class="child-photo-border">
+                <img src="static/child-photo.jpg" class="child-photo" alt="child">
+            </div>
+            <div class="child-name">Маша И...</div>
+        </div>
+
+        <div class="divider first-divider"></div>
+
+        <div class="menu-items">
+            <div class="menu-item active">
+                <div class="circle"></div>
+                <div class="menu-item-content">
+                    <img src="static/home-icon.svg" class="icon" alt="home">
+                    <span class="menu-text">Главная</span>
+                </div>
+            </div>
+            <div class="menu-item">
+                <div class="circle"></div>
+                <div class="menu-item-content">
+                    <img src="static/children-icon.svg" class="icon" alt="children">
+                    <span class="menu-text">Дети</span>
+                </div>
+            </div>
+            <div class="menu-item">
+                <div class="circle"></div>
+                <div class="menu-item-content">
+                    <img src="static/calendar-icon.svg" class="icon" alt="calendar">
+                    <span class="menu-text">Календарь</span>
+                </div>
+            </div>
+            <div class="menu-item">
+                <div class="circle"></div>
+                <div class="menu-item-content">
+                    <img src="static/groups-icon.svg" class="icon" alt="groups">
+                    <span class="menu-text">Группы</span>
+                </div>
+            </div>
+            <div class="menu-item">
+                <div class="circle"></div>
+                <div class="menu-item-content">
+                    <img src="static/faq-icon.svg" class="icon" alt="faq">
+                    <span class="menu-text">FAQ</span>
+                </div>
+            </div>
+
+            <div class="divider second-divider"></div>
+
+            <div class="menu-item">
+                <div class="circle"></div>
+                <div class="menu-item-content">
+                    <img src="static/support-icon.svg" class="icon" alt="support">
+                    <span class="menu-text">Поддержка</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

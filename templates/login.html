@@ -1,16 +1,21 @@
-{% extends "base.html" %}
-
-{% block title %}Login - StarTrack{% endblock %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
 <div class="main">
   <div class="form-container">
     <div class="header">
-      <img src="/static/logo.jpg" alt="logo" class=logo>
+      <img src="{{ url_for('static', filename='logo.jpg') }}" alt="logo" class=logo>
       <h1>Добро пожаловать в StarTrack!</h1>
     </div>
-    <button class="google-btn" onclick="location.href='{{ url_for('OAuth2 across Google') }}'">
-      <img src="static/google-icon.jpg" alt="Google Icon" class=google-icon>
+    <button class="google-btn">
+      <img src="{{ url_for('static', filename='google-icon.jpg') }}" alt="Google Icon" class=google-icon>
       <span>Продолжить через gmail</span>
     </button>
     <button class="email-btn">Продолжить через почту</button>
@@ -29,14 +34,17 @@
 <div class="message-container" id="message-container" style="display: none;">
   <div class="message-form">
     <div class="message-header">
-      <img src="static/mail-icon.jpg" alt="Mail Icon" class="mail-icon">
+      <img src="{{ url_for('static', filename='mail-icon.svg') }}" alt="Mail Icon" class="mail-icon">
       <h2>Проверь свою почту!</h2>
     </div>
     <div class="message-text">
-      <p>Мы отправили ссылку для активации
-        на <span id="user-email"></span>.</p>
-        <p>Письмо может попасть в спам.</p>
+      <p>Мы отправили ссылку для активации</p>
+      <p>на <span id="user-email"></span>.</p>
+      <p class="spam">Письмо может попасть в спам.</p>
     </div>
+    <p class="resend-link" id="resend-link" style="display: none;"><a href="#" id="resend-action">Нажми сюда,</a> если письмо не пришло.</p>
   </div>
 </div>
-{% endblock %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

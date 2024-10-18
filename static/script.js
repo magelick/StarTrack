@@ -1,12 +1,19 @@
-document.addEventListener('DOMContentLoaded', function() {
-  const emailBtn = document.querySelector('.email-btn');
-  const emailInput = document.querySelector('.email-input');
-  const submitBtn = document.querySelector('.submit-btn');
-  const errorMessage = document.getElementById('error-message');
-  const personalDataCheckbox = document.getElementById('personal-data');
-  const messageContainer = document.getElementById('message-container');
-  const userEmailSpan = document.getElementById('user-email');
+const emailBtn = document.querySelector('.email-btn');
+const emailInput = document.querySelector('.email-input');
+const submitBtn = document.querySelector('.submit-btn');
+const messageContainer = document.getElementById('message-container');
+const userEmail = document.getElementById('user-email');
+const formContainer = document.querySelector('.form-container');
 
+emailBtn.addEventListener('click', () => {
+  emailBtn.style.display = 'none';
+  emailInput.style.display = 'block';
+  submitBtn.style.display = 'block';
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  const emailInput = document.getElementById('email-input');
+  const errorMessage = document.getElementById('error-message');
   const allowedDomains = ['gmail.com', 'yahoo.com', 'example.com', 'mail.ru', 'icloud.com'];
 
   function validateEmail() {
@@ -26,7 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
       return false;
     }
 
-    const domain = emailValue.split('@')[1].toLowerCase();
+    const domain = emailValue.split('@')[1];
+
     if (!allowedDomains.includes(domain)) {
       emailInput.classList.add('error');
       errorMessage.textContent = 'Недопустимый домен';
@@ -39,62 +47,50 @@ document.addEventListener('DOMContentLoaded', function() {
     return true;
   }
 
-  emailBtn.addEventListener('click', () => {
-    emailBtn.style.display = 'none';
-    emailInput.style.display = 'block';
-    submitBtn.style.display = 'block';
-  });
-
   emailInput.addEventListener('blur', validateEmail);
 
   submitBtn.addEventListener('click', function(event) {
-    event.preventDefault();
+      event.preventDefault();
 
-    const emailIsValid = validateEmail();
-    const isChecked = personalDataCheckbox.checked;
-    const checkboxError = document.getElementById('checkbox-error');
-
-    checkboxError.style.display = 'none';
-
-    if (!isChecked) {
-      checkboxError.style.display = 'block';
-      return;
-    }
-
-    // Если email валидный и согласие получено, отправляется запрос на сервер
-    if (emailIsValid) {
-      const email = emailInput.value.trim();
-
-      // Отправка запроса на сервер
-      fetch('/send_email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email: email })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          // Отображение сообщения
-          userEmailSpan.textContent = email;
+      if (validateEmail()) {
+          formContainer.style.display = 'none';
           messageContainer.style.display = 'flex';
-        } else {
-          // Отображение ошибки от сервера
-          alert(data.message || 'Произошла ошибка при отправке письма.');
-        }
-      })
-      .catch((error) => {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при отправке письма.');
-      });
-    }
-  });
-
-  // Закрытие сообщения при клике вне формы
-  messageContainer.addEventListener('click', function(e) {
-    if (e.target === messageContainer) {
-      messageContainer.style.display = 'none';
-    }
+          userEmail.textContent = emailInput.value;
+      }
   });
 });
+
+// Появление строчки с ссылкой "Нажми сюда"
+document.addEventListener('DOMContentLoaded', function() {
+  setTimeout(function() {
+    document.getElementById('resend-link').style.display = 'block';
+  }, 5000);
+
+  // Обработчик клика по ссылке "Нажми сюда"
+  document.getElementById('resend-action').addEventListener('click', function(event) {
+    event.preventDefault();
+    var messageContainer = document.getElementById('message-container');
+    messageContainer.style.display = 'block';
+    messageContainer.style.opacity = '1';
+  });
+});
+
+document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', () => {
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+    });
+});
+
+// Открытие бокового меню
+function toggleMenu() {
+    const menu = document.querySelector('.side-menu');
+    const dividers = document.querySelectorAll('.divider');
+
+    menu.classList.toggle('open');
+
+    dividers.forEach(divider => {
+        divider.classList.toggle('open');
+    });
+}
+
