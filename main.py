@@ -52,26 +52,38 @@ app.mount(
     name="static",
 )
 
-
-@app.get(path="/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    return templating.TemplateResponse("homepage.html", {"request": request})
-
-
-@app.get("/login", response_class=HTMLResponse)
-async def login_template(request: Request):
-    return templating.TemplateResponse("login.html", {"request": request})
-
-
-@app.get(path="/ai_testing", response_class=HTMLResponse)
-async def read_ai(request: Request):
-    return templating.TemplateResponse("ai_test.html", {"request": request})
-
-
 # Add all custom middlewares
 for MIDDLEWARE, OPTIONS in MIDDLEWARES:
     app.add_middleware(MIDDLEWARE, **OPTIONS)
 
+
+@app.get(path="/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    try:
+        return templating.TemplateResponse(
+            "homepage.html", {"request": request}
+        )
+    except Exception as e:
+        logger.error(e)
+
+
+@app.get("/login", response_class=HTMLResponse)
+async def login_template(request: Request):
+    try:
+        return templating.TemplateResponse("login.html", {"request": request})
+    except Exception as e:
+        logger.error(e)
+
+
+@app.get(path="/ai_testing", response_class=HTMLResponse)
+async def read_ai(request: Request):
+    try:
+        return templating.TemplateResponse(
+            "ai_test.html", {"request": request}
+        )
+    except Exception as e:
+        logger.error(e)
+
+
 if __name__ == "__main__":
-    logger.info("Starting Uvicorn server...")
     uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)

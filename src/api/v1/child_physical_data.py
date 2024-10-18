@@ -8,6 +8,7 @@ from sqlalchemy.exc import NoResultFound
 from starlette import status
 
 from src.dependencies import UOWDep
+from src.logger import logger
 from src.schemas.child_physical_data import (
     ChildPhysicalDataDetail,
     ChildPhysicalDataAddForm,
@@ -29,7 +30,7 @@ router = APIRouter(
     response_model=List[ChildPhysicalDataDetail],
     name="Get list of child datas",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_list_child_physical_datas(
     uow: UOWDep,
 ) -> List[ChildPhysicalDataDetail]:
@@ -38,10 +39,14 @@ async def get_list_child_physical_datas(
     :param uow:
     :return:
     """
-    child_physical_datas = (
-        await ChildPhysicalDataService().get_child_physical_datas(uow=uow)
-    )
-    return child_physical_datas
+    try:
+        child_physical_datas = (
+            await ChildPhysicalDataService().get_child_physical_datas(uow=uow)
+        )
+        return child_physical_datas
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.post(
@@ -73,7 +78,7 @@ async def add_new_child_physical_data(
     response_model=ChildPhysicalDataDetail,
     name="Get child physical data by ID",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_child_physical_data_by_id(
     uow: UOWDep, child_physical_data_id: PositiveInt = Path(default=..., ge=1)
 ) -> ChildPhysicalDataDetail:

@@ -8,6 +8,7 @@ from sqlalchemy.exc import NoResultFound
 from starlette import status
 
 from src.dependencies import UOWDep
+from src.logger import logger
 from src.schemas.child_health_data import (
     ChildHealthDataDetail,
     ChildHealthDataAddForm,
@@ -29,7 +30,7 @@ router = APIRouter(
     response_model=List[ChildHealthDataDetail],
     name="Get list of child health datas",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_list_child_health_datas(
     uow: UOWDep,
 ) -> List[ChildHealthDataDetail]:
@@ -38,10 +39,14 @@ async def get_list_child_health_datas(
     :param uow:
     :return:
     """
-    child_health_datas = await ChildHealthDataService().get_child_health_datas(
-        uow=uow
-    )
-    return child_health_datas
+    try:
+        child_health_datas = (
+            await ChildHealthDataService().get_child_health_datas(uow=uow)
+        )
+        return child_health_datas
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.post(
@@ -59,12 +64,16 @@ async def add_new_child_health_data(
     :param add_form:
     :return:
     """
-    new_child_health_data = (
-        await ChildHealthDataService().add_child_health_data(
-            uow=uow, child=add_form
+    try:
+        new_child_health_data = (
+            await ChildHealthDataService().add_child_health_data(
+                uow=uow, child=add_form
+            )
         )
-    )
-    return new_child_health_data
+        return new_child_health_data
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.get(
@@ -73,7 +82,7 @@ async def add_new_child_health_data(
     response_model=ChildHealthDataDetail,
     name="Get child health data by ID",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_child_health_data_by_id(
     uow: UOWDep, child_data_id: PositiveInt = Path(default=..., ge=1)
 ) -> ChildHealthDataDetail:
@@ -90,7 +99,8 @@ async def get_child_health_data_by_id(
             )
         )
         return child_health_data
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child health data not found",
@@ -122,7 +132,8 @@ async def update_child_data_by_id(
             )
         )
         return update_child_health_data
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child health data not found",
@@ -148,7 +159,8 @@ async def delete_child_health_data_by_id(
             uow=uow, id=child_health_data_id
         )
         return {"msg": "Child health data has been successfully removed"}
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child health data not found",

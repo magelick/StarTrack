@@ -12,6 +12,7 @@ from src.repositories.models import (
     ChildAcademicDataRepository,
     ChildFamilyDataRepository,
     ChildNutritionDataRepository,
+    UserChildRepository,
 )
 
 
@@ -20,6 +21,7 @@ class AbstractUnitOfWork(ABC):
     Abstract class for Unit Of Work pattern
     """
 
+    users_children: UserChildRepository
     users: UserRepository
     children: ChildRepository
     child_datas: ChildDataRepository
@@ -56,7 +58,7 @@ class AbstractUnitOfWork(ABC):
         pass
 
 
-class UnitOfWork:
+class UnitOfWork(AbstractUnitOfWork):
     """
     Basic class for Unit Of Work pattern
     """
@@ -67,6 +69,7 @@ class UnitOfWork:
     async def __aenter__(self):
         self._session = self.session_factory()
 
+        self.users_children = UserChildRepository(self._session)
         self.users = UserRepository(self._session)
         self.children = ChildRepository(self._session)
         self.child_datas = ChildDataRepository(self._session)
@@ -83,7 +86,6 @@ class UnitOfWork:
         )
 
     async def __aexit__(self, *args):
-        await self.rollback()
         await self._session.close()
 
     async def commit(self):

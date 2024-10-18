@@ -5,15 +5,19 @@ from pydantic import PositiveInt
 from sqlalchemy.exc import NoResultFound
 from starlette import status
 from fastapi_cache.decorator import cache
+from fastapi.requests import Request
 
-
+from src.logger import logger
 from src.schemas.child import ChildDetail, ChildAddForm, ChildUpdateForm
 from src.services.child import ChildService
-from src.dependencies import UOWDep
+from src.dependencies import UOWDep, is_authenticated
 
 # Initial child router
 router = APIRouter(
-    prefix="/child", tags=["Child"], default_response_class=ORJSONResponse
+    prefix="/child",
+    tags=["Child"],
+    default_response_class=ORJSONResponse,
+    dependencies=[is_authenticated],
 )
 
 
@@ -23,15 +27,19 @@ router = APIRouter(
     response_model=List[ChildDetail],
     name="Get list of children",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_list_children(uow: UOWDep) -> List[ChildDetail]:
     """
     Get list of children
     :param uow:
     :return:
     """
-    children = await ChildService().get_children(uow=uow)
-    return children
+    try:
+        children = await ChildService().get_children(uow=uow)
+        return children
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.post(
@@ -40,15 +48,24 @@ async def get_list_children(uow: UOWDep) -> List[ChildDetail]:
     response_model=ChildDetail,
     name="Add new child",
 )
-async def add_new_child(uow: UOWDep, add_form: ChildAddForm) -> ChildDetail:
+async def add_new_child(
+    uow: UOWDep, add_form: ChildAddForm, request: Request
+) -> ChildDetail:
     """
     Add new child
+    :param request:
     :param uow:
     :param add_form:
     :return:
     """
-    new_child = await ChildService().add_child(uow=uow, child=add_form)
-    return new_child
+    try:
+        new_child = await ChildService().add_child(
+            uow=uow, child=add_form, request=request
+        )
+        return new_child
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.get(
@@ -57,7 +74,7 @@ async def add_new_child(uow: UOWDep, add_form: ChildAddForm) -> ChildDetail:
     response_model=ChildDetail,
     name="Get child by ID",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_child_by_id(
     uow: UOWDep, child_id: PositiveInt = Path(default=..., ge=1)
 ) -> ChildDetail:
@@ -70,7 +87,8 @@ async def get_child_by_id(
     try:
         child = await ChildService().get_child(uow=uow, id=child_id)
         return child
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Child not found"
         )
@@ -99,7 +117,8 @@ async def update_child_by_id(
             uow=uow, child=update_form, id=child_id
         )
         return update_child
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Child not found"
         )
@@ -122,7 +141,8 @@ async def delete_child_by_id(
     try:
         await ChildService().delete_child(uow=uow, id=child_id)
         return {"msg": "Child has been successfully removed"}
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Child not found"
         )

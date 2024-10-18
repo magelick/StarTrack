@@ -23,8 +23,6 @@ services:
       - "5432:5432"
     restart: always
     env_file: .env_example
-    environment:
-      - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - .:/data/db/var/lib/postgresql/data
 

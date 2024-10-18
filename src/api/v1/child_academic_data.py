@@ -14,6 +14,7 @@ from src.schemas.child_academic_data import (
     ChildAcademicDataUpdateForm,
 )
 from src.services.child_academic_data import ChildAcademicDataService
+from src.logger import logger
 
 # Initial child academic data router
 router = APIRouter(
@@ -29,7 +30,7 @@ router = APIRouter(
     response_model=List[ChildAcademicDataDetail],
     name="Get list of child academic datas",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_list_child_academic_datas(
     uow: UOWDep,
 ) -> List[ChildAcademicDataDetail]:
@@ -38,10 +39,14 @@ async def get_list_child_academic_datas(
     :param uow:
     :return:
     """
-    child_academic_datas = (
-        await ChildAcademicDataService().get_child_academic_datas(uow=uow)
-    )
-    return child_academic_datas
+    try:
+        child_academic_datas = (
+            await ChildAcademicDataService().get_child_academic_datas(uow=uow)
+        )
+        return child_academic_datas
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.post(
@@ -59,12 +64,16 @@ async def add_new_child_academic_data(
     :param add_form:
     :return:
     """
-    new_child_academic_data = (
-        await ChildAcademicDataService().add_child_academic_data(
-            uow=uow, child=add_form
+    try:
+        new_child_academic_data = (
+            await ChildAcademicDataService().add_child_academic_data(
+                uow=uow, child=add_form
+            )
         )
-    )
-    return new_child_academic_data
+        return new_child_academic_data
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.get(
@@ -73,7 +82,7 @@ async def add_new_child_academic_data(
     response_model=ChildAcademicDataDetail,
     name="Get child academic data by ID",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_child_academic_data_by_id(
     uow: UOWDep, child_academic_data_id: PositiveInt = Path(default=..., ge=1)
 ) -> ChildAcademicDataDetail:
@@ -90,7 +99,8 @@ async def get_child_academic_data_by_id(
             )
         )
         return child_academic_data
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child academic data not found",
@@ -122,7 +132,8 @@ async def update_child_data_by_id(
             )
         )
         return update_child_academic_data
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child academic data not found",
@@ -148,7 +159,8 @@ async def delete_child_academic_data_by_id(
             uow=uow, id=child_academic_data_id
         )
         return {"msg": "Child academic data has been successfully removed"}
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child academic data not found",

@@ -8,6 +8,7 @@ from sqlalchemy.exc import NoResultFound
 from starlette import status
 
 from src.dependencies import UOWDep
+from src.logger import logger
 from src.schemas.child_data import (
     ChildDataDetail,
     ChildDataAddForm,
@@ -29,15 +30,19 @@ router = APIRouter(
     response_model=List[ChildDataDetail],
     name="Get list of child datas",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_list_child_datas(uow: UOWDep) -> List[ChildDataDetail]:
     """
     Get list of child datas
     :param uow:
     :return:
     """
-    child_datas = await ChildDataService().get_child_datas(uow=uow)
-    return child_datas
+    try:
+        child_datas = await ChildDataService().get_child_datas(uow=uow)
+        return child_datas
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.post(
@@ -55,10 +60,14 @@ async def add_new_child_data(
     :param add_form:
     :return:
     """
-    new_child_data = await ChildDataService().add_child_data(
-        uow=uow, child_add_form=add_form
-    )
-    return new_child_data
+    try:
+        new_child_data = await ChildDataService().add_child_data(
+            uow=uow, child_add_form=add_form
+        )
+        return new_child_data
+    except Exception as e:
+        logger.error(e)
+        return None
 
 
 @router.get(
@@ -67,7 +76,7 @@ async def add_new_child_data(
     response_model=ChildDataDetail,
     name="Get child data by ID",
 )
-@cache(expire=120)
+@cache(expire=60)
 async def get_child_data_by_id(
     uow: UOWDep, child_data_id: PositiveInt = Path(default=..., ge=1)
 ) -> ChildDataDetail:
@@ -82,7 +91,8 @@ async def get_child_data_by_id(
             uow=uow, id=child_data_id
         )
         return child_data
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child data not found",
@@ -112,7 +122,8 @@ async def update_child_data_by_id(
             uow=uow, child_update_form=update_form, id=child_data_id
         )
         return update_child_data
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child data not found",
@@ -136,7 +147,8 @@ async def delete_child_data_by_id(
     try:
         await ChildDataService().delete_child_data(uow=uow, id=child_data_id)
         return {"msg": "Child has been successfully removed"}
-    except NoResultFound:
+    except (NoResultFound, Exception) as e:
+        logger.error(e)
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Child data not found",
