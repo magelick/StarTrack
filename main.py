@@ -5,15 +5,12 @@ from fastapi import FastAPI
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from redis.asyncio import Redis
-from fastapi.requests import Request
-from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from src.settings import SETTINGS
 from src.api.router import router as api_router
+from src.template_endpoints import router as template_router
 from src.middlewares import MIDDLEWARES
-from src.settings import templating
-from src.logger import logger
 
 
 @asynccontextmanager
@@ -44,6 +41,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 # Include routers
+app.include_router(router=template_router)
 app.include_router(router=api_router)
 # Mount static files
 app.mount(
@@ -55,35 +53,6 @@ app.mount(
 # Add all custom middlewares
 for MIDDLEWARE, OPTIONS in MIDDLEWARES:
     app.add_middleware(MIDDLEWARE, **OPTIONS)
-
-
-@app.get(path="/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    try:
-        return templating.TemplateResponse(
-            "homepage.html", {"request": request}
-        )
-    except Exception as e:
-        logger.error(e)
-
-
-@app.get("/login", response_class=HTMLResponse)
-async def login_template(request: Request):
-    try:
-        return templating.TemplateResponse("login.html", {"request": request})
-    except Exception as e:
-        logger.error(e)
-
-
-@app.get(path="/ai_testing", response_class=HTMLResponse)
-async def read_ai(request: Request):
-    try:
-        return templating.TemplateResponse(
-            "ai_test.html", {"request": request}
-        )
-    except Exception as e:
-        logger.error(e)
-
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="0.0.0.0", port=8000, reload=True)
