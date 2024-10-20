@@ -48,7 +48,7 @@ app.include_router(router=api_router)
 # Mount static files
 app.mount(
     path="/static",
-    app=StaticFiles(directory="static", check_dir=True),
+    app=StaticFiles(directory="./static"),
     name="static",
 )
 
